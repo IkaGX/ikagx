@@ -88,7 +88,7 @@ Este projeto está licenciado sob a licença **MIT**. Consulte o arquivo **LICEN
 
 ## 👨‍💻 Autor
 
-**Diego Rattay**
+**IkaGX**
 
 Desenvolvido para a comunidade do Ikariam com foco em produtividade, organização e inteligência durante o jogo.
 
