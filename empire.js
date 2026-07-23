@@ -13,6 +13,7 @@ var IkaEmpire = {
   _carregando: false,
   _abaAtiva: 'recursos',
   _somenteLeitura: false,
+  _origem: null, // 'lobby' | 'perfil' — controla destino do botão Voltar
 
   /* ============================ init ============================ */
 
@@ -37,11 +38,8 @@ var IkaEmpire = {
 
   // Lobby: botao flutuante para navegar nos imperios salvos por conta/servidor.
   iniciarLobby: function () {
-    if (document.getElementById('ikaext-btn-imperios')) return;
     IkaEmpire._criarModal();
-    $('<button id="ikaext-btn-imperios">\uD83C\uDFDB Imperios</button>')
-      .on('click', function () { IkaEmpire.abrirLobby(); })
-      .appendTo('body');
+    // Botão removido do lobby — modal acessível apenas pelo jogo
   },
 
   /* ============================ modal ============================ */
@@ -118,6 +116,42 @@ var IkaEmpire = {
       .ikaext-empire-tabela th.ikaext-empire-cidade { z-index: 3; }
       .ikaext-empire-tabela tbody tr:hover td { background: rgba(201,168,76,0.08); }
       .ikaext-empire-prod { color: #2e7d32; font-size: 10px; margin-left: 4px; }
+      .ikaext-res-icon { width: 20px; height: 20px; vertical-align: middle; display: block; margin: 0 auto; }
+
+      /* Building sprite icons in header */
+      th.ikagx-emp-building { width: 45px; padding: 2px 1px !important; text-align: center; }
+      th.ikagx-emp-building div { height: 41px; width: 43px; background-repeat: no-repeat; margin: 0 auto; }
+      .ikagx-emp-building-townHall div       { background-position: 0 0; }
+      .ikagx-emp-building-academy div        { background-position: -43px 0; }
+      .ikagx-emp-building-warehouse div      { background-position: -86px 0; }
+      .ikagx-emp-building-tavern div         { background-position: -129px 0; }
+      .ikagx-emp-building-palace div         { background-position: -172px 0; }
+      .ikagx-emp-building-palaceColony div   { background-position: -215px 0; }
+      .ikagx-emp-building-museum div         { background-position: -258px 0; }
+      .ikagx-emp-building-port div           { background-position: -301px 0; }
+      .ikagx-emp-building-shipyard div       { background-position: -345px 0; }
+      .ikagx-emp-building-barracks div       { background-position: -388px 0; }
+      .ikagx-emp-building-wall div           { background-position: -431px 0; }
+      .ikagx-emp-building-embassy div        { background-position: -474px 0; }
+      .ikagx-emp-building-branchOffice div   { background-position: -517px 0; }
+      .ikagx-emp-building-workshop div       { background-position: -560px 0; }
+      .ikagx-emp-building-safehouse div      { background-position: -603px 0; }
+      .ikagx-emp-building-forester div       { background-position: -646px 0; }
+      .ikagx-emp-building-glassblowing div   { background-position: -689px 0; }
+      .ikagx-emp-building-alchemist div      { background-position: -733px 0; }
+      .ikagx-emp-building-winegrower div     { background-position: -776px 0; }
+      .ikagx-emp-building-stonemason div     { background-position: -819px 0; }
+      .ikagx-emp-building-carpentering div   { background-position: -862px 0; }
+      .ikagx-emp-building-optician div       { background-position: -905px 0; }
+      .ikagx-emp-building-fireworker div     { background-position: -948px 0; }
+      .ikagx-emp-building-vineyard div       { background-position: -991px 0; }
+      .ikagx-emp-building-architect div      { background-position: -1034px 0; }
+      .ikagx-emp-building-temple div         { background-position: -1077px 0; }
+      .ikagx-emp-building-dump div           { background-position: -1121px 0; }
+      .ikagx-emp-building-pirateFortress div { background-position: -1164px 0; }
+      .ikagx-emp-building-blackMarket div    { background-position: -1207px 0; }
+      .ikagx-emp-building-marineChartArchive div { background-position: -1297px 0; }
+      .ikagx-emp-building-shrineOfOlympus div { background-position: -1250px 0; }
 
       .ikaext-empire-srv { font-family: 'Cinzel', serif; font-size: 13px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.08em; margin: 16px 0 8px; }
       .ikaext-empire-item {
@@ -175,7 +209,14 @@ var IkaEmpire = {
     $(document).on('keydown.ikaempire', function (e) { if (e.key === 'Escape') IkaEmpire.fecharModal(); });
     $('#ikaext-empire-atualizar').on('click', function () { IkaEmpire.coletar(); });
     $('#ikaext-empire-json').on('click', function () { IkaEmpire._exportarJson(); });
-    $('#ikaext-empire-voltar').on('click', function () { IkaEmpire.abrirLobby(); });
+    $('#ikaext-empire-voltar').on('click', function () {
+      if (IkaEmpire._origem === 'perfil') {
+        IkaEmpire.fecharModal();
+        $('#ikaext-perfil-overlay').addClass('aberta');
+      } else {
+        IkaEmpire.abrirLobby();
+      }
+    });
 
     modal.find('.ikaext-empire-aba').on('click', function () {
       IkaEmpire._abaAtiva = $(this).data('aba');
@@ -243,8 +284,10 @@ var IkaEmpire = {
     });
   },
 
-  // Lobby: abre o snapshot salvo de uma conta (somente leitura).
-  abrirLocal: function (servidor, conta) {
+  // Abre o snapshot salvo de uma conta (somente leitura).
+  // origem: 'lobby' (padrão) ou 'perfil' — controla destino do botão Voltar
+  abrirLocal: function (servidor, conta, origem) {
+    IkaEmpire._origem = origem || 'lobby';
     IkaEmpire._criarModal();
     $('#ikaext-empire-json').show();
     $('#ikaext-empire-abas').show();
@@ -268,6 +311,50 @@ var IkaEmpire = {
 
   /* ============================ coleta ============================ */
 
+  // Coleta dados em background sem abrir ou atualizar a modal
+  coletarBackground: function () {
+    var cidades = IkaEmpire._listarCidades();
+    if (!cidades.length) return;
+
+    var servidor = IkaEmpire._servidorAtual();
+    var conta    = IkaEmpire._contaAtual();
+    var token    = IkaEmpire._actionRequestInicial();
+    var i        = 0;
+    var resultado = [];
+
+    console.log('[IkaGX] Coletando império em background:', servidor, conta, cidades.length + ' cidades');
+
+    function proxima() {
+      if (i >= cidades.length) {
+        var dados = {
+          coletadoEm: Date.now(),
+          servidor: servidor,
+          conta: conta,
+          cidades: resultado
+        };
+        IkaLog.salvarImperio(servidor, conta, dados);
+
+        // Se a modal estiver aberta, atualiza a visualização
+        if ($('#ikaext-empire-overlay').hasClass('aberta')) {
+          IkaEmpire._dados = dados;
+          IkaEmpire._render();
+        }
+
+        console.log('[IkaGX] Império salvo em background:', servidor, conta);
+        return;
+      }
+
+      var cidade = cidades[i++];
+      IkaEmpire._coletarCidade(cidade, token, function (dadosCidade, novoToken) {
+        if (novoToken) token = novoToken;
+        resultado.push(dadosCidade);
+        proxima();
+      });
+    }
+
+    proxima();
+  },
+
   coletar: function () {
     var cidades = IkaEmpire._listarCidades();
     if (!cidades.length) {
@@ -275,36 +362,39 @@ var IkaEmpire = {
       return;
     }
 
-    IkaEmpire._carregando = true;
-    IkaEmpire._render();
+    IkaEmpire._carregando = false; // não bloqueia renderização
+    IkaEmpire._dados = {
+      coletadoEm: Date.now(),
+      servidor: IkaEmpire._servidorAtual(),
+      conta: IkaEmpire._contaAtual(),
+      cidades: []
+    };
+    IkaEmpire._render(); // exibe tabela vazia imediatamente
 
-    var resultado = [];
     var token = IkaEmpire._actionRequestInicial();
     var i = 0;
-
-    var servidor = IkaEmpire._servidorAtual();
-    var conta = IkaEmpire._contaAtual();
+    var total = cidades.length;
 
     function proxima() {
-      if (i >= cidades.length) {
-        IkaEmpire._carregando = false;
-        IkaEmpire._dados = {
-          coletadoEm: Date.now(),
-          servidor: servidor,
-          conta: conta,
-          cidades: resultado
-        };
-        IkaLog.salvarImperio(servidor, conta, IkaEmpire._dados);
-        IkaEmpire._render();
+      if (i >= total) {
+        // Coleta concluída — salva e atualiza status final
+        IkaEmpire._dados.coletadoEm = Date.now();
+        IkaLog.salvarImperio(IkaEmpire._dados.servidor, IkaEmpire._dados.conta, IkaEmpire._dados);
+        IkaEmpire._status('Servidor: ' + IkaEmpire._dados.servidor + ' | ' + total +
+          ' cidade(s) | coletado em ' + new Date(IkaEmpire._dados.coletadoEm).toLocaleString('pt-BR'));
         return;
       }
 
       var cidade = cidades[i++];
-      IkaEmpire._status('Coletando ' + i + '/' + cidades.length + ': ' + cidade.nome);
+      IkaEmpire._status('Coletando ' + i + '/' + total + ': ' + cidade.nome + '...');
 
       IkaEmpire._coletarCidade(cidade, token, function (dadosCidade, novoToken) {
         if (novoToken) token = novoToken;
-        resultado.push(dadosCidade);
+
+        // Adiciona cidade e re-renderiza imediatamente — resultado progressivo
+        IkaEmpire._dados.cidades.push(dadosCidade);
+        IkaEmpire._render();
+
         proxima();
       });
     }
@@ -572,25 +662,49 @@ var IkaEmpire = {
   _rotuloCidade: function (c) { return IkaEmpire._esc((c.nome || ('#' + c.cityId)).trim()); },
 
   _renderEdificios: function (cidades) {
-    var ordem = [], nomes = {};
+    // Descobre o número máximo de instâncias de cada tipo entre todas as cidades
+    var maxPorTipo = {}, nomes = {}, ordemTipos = [];
+
     cidades.forEach(function (c) {
+      var contPorTipo = {};
       c.edificios.forEach(function (b) {
-        if (ordem.indexOf(b.building) === -1) { ordem.push(b.building); nomes[b.building] = b.nome; }
+        if (ordemTipos.indexOf(b.building) === -1) { ordemTipos.push(b.building); nomes[b.building] = b.nome; }
+        contPorTipo[b.building] = (contPorTipo[b.building] || 0) + 1;
+      });
+      ordemTipos.forEach(function (tp) {
+        maxPorTipo[tp] = Math.max(maxPorTipo[tp] || 0, contPorTipo[tp] || 0);
       });
     });
 
+    // Monta lista de colunas: uma por instância (ex: warehouse, warehouse, warehouse)
+    var colunas = [];
+    ordemTipos.forEach(function (tp) {
+      for (var i = 0; i < (maxPorTipo[tp] || 1); i++) {
+        colunas.push({ tipo: tp, idx: i });
+      }
+    });
+
+    var spriteUrl = chrome.runtime.getURL('buildingbutton_sprite.jpg');
     var h = '<table class="ikaext-empire-tabela"><thead><tr><th class="ikaext-empire-cidade">Cidade</th>';
-    ordem.forEach(function (tp) { h += '<th>' + IkaEmpire._esc(nomes[tp]) + '</th>'; });
+    colunas.forEach(function (col) {
+      h += '<th class="ikagx-emp-building ikagx-emp-building-' + col.tipo + '" title="' + IkaEmpire._esc(nomes[col.tipo]) + '">' +
+             '<div style="background-image:url(' + spriteUrl + ')"></div>' +
+           '</th>';
+    });
     h += '</tr></thead><tbody>';
 
     cidades.forEach(function (c) {
-      var porTipo = {};
+      // Agrupa instâncias por tipo mantendo a ordem de aparição
+      var instPorTipo = {};
       c.edificios.forEach(function (b) {
-        (porTipo[b.building] = porTipo[b.building] || []).push(b.nivel + (b.emUpgrade ? '+' : ''));
+        if (!instPorTipo[b.building]) instPorTipo[b.building] = [];
+        instPorTipo[b.building].push(b.nivel + (b.emUpgrade ? '+' : ''));
       });
+
       h += '<tr><td class="ikaext-empire-cidade">' + IkaEmpire._rotuloCidade(c) + '</td>';
-      ordem.forEach(function (tp) {
-        h += '<td>' + (porTipo[tp] ? porTipo[tp].join(' / ') : '\u2014') + '</td>';
+      colunas.forEach(function (col) {
+        var lista = instPorTipo[col.tipo] || [];
+        h += '<td>' + (lista[col.idx] !== undefined ? lista[col.idx] : '\u2014') + '</td>';
       });
       h += '</tr>';
     });
@@ -599,18 +713,29 @@ var IkaEmpire = {
   },
 
   _renderRecursos: function (cidades) {
+    var u = chrome.runtime.getURL;
     var cols = [
-      { k: 'wood', label: 'Madeira' },
-      { k: 'wine', label: 'Vinho' },
-      { k: 'marble', label: 'Marmore' },
-      { k: 'glass', label: 'Cristal' },
-      { k: 'sulfur', label: 'Enxofre' }
+      { k: 'wood',   label: 'Madeira', icon: '<img src="' + u('img/icon_wood.png')   + '" title="Madeira" class="ikaext-res-icon">' },
+      { k: 'wine',   label: 'Vinho',   icon: '<img src="' + u('img/icon_wine.png')   + '" title="Vinho" class="ikaext-res-icon">' },
+      { k: 'marble', label: 'Mármore', icon: '<img src="' + u('img/icon_marble.png') + '" title="Mármore" class="ikaext-res-icon">' },
+      { k: 'glass',  label: 'Cristal', icon: '<img src="' + u('img/icon_glass.png')  + '" title="Cristal" class="ikaext-res-icon">' },
+      { k: 'sulfur', label: 'Enxofre', icon: '<img src="' + u('img/icon_sulfur.png') + '" title="Enxofre" class="ikaext-res-icon">' }
     ];
+
+    var thIcon = function(src, title) {
+      return '<th title="' + title + '"><img src="' + u(src) + '" class="ikaext-res-icon" title="' + title + '"></th>';
+    };
 
     var h = '<table class="ikaext-empire-tabela"><thead><tr>' +
       '<th class="ikaext-empire-cidade">Cidade</th>' +
-      '<th>Populacao</th><th>Cresc.</th><th>Satisf.</th><th>Ciencia</th>';
-    cols.forEach(function (c) { h += '<th>' + c.label + '</th>'; });
+      thIcon('img/icon_population.png',   'População') +
+      thIcon('img/icon_growth.png',       'Crescimento') +
+      thIcon('img/icon_satisfaction.png', 'Satisfação') +
+      thIcon('img/icon_research.png',     'Ciência');
+
+    cols.forEach(function (c) {
+      h += '<th title="' + c.label + '">' + c.icon + '</th>';
+    });
     h += '</tr></thead><tbody>';
 
     cidades.forEach(function (c) {

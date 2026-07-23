@@ -2,20 +2,35 @@
   "manifest_version": 3,
   "name": "IkaGX",
   "version": "2.0.0",
-  "description": "IkaGX — Ikariam Intelligence.",
+  "description": "IkaGX \u2014 Ikariam Intelligence.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage"],
+  "permissions": [
+    "storage"
+  ],
   "host_permissions": [
     "https://*.ikariam.gameforge.com/*",
     "https://api.ipify.org/*"
   ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "buildingbutton_sprite.jpg",
+        "img/*.png"
+      ],
+      "matches": [
+        "https://*.ikariam.gameforge.com/*"
+      ]
+    }
+  ],
   "content_scripts": [
     {
-      "matches": ["https://*.ikariam.gameforge.com/*"],
+      "matches": [
+        "https://*.ikariam.gameforge.com/*"
+      ],
       "js": [
         "libs/jquery-4.0.0.min.js",
         "log.js",

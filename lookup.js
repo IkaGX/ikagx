@@ -515,7 +515,7 @@ var IkaLookup = {
       empDiv.find('.ikaext-imp-aba').on('click', function() { pinta($(this).data('aba')); });
       empDiv.find('#ikaext-imp-abrir').on('click', function() {
         IkaLookup.fecharModal();
-        IkaEmpire.abrirLocal(servidor, conta);
+        IkaEmpire.abrirLocal(servidor, conta, 'perfil');
       });
       pinta('recursos');
     });
