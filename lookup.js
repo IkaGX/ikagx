@@ -497,6 +497,7 @@ var IkaLookup = {
           '<div class="ikaext-imp-abas">' +
             '<button class="ikaext-btn-sec ikaext-imp-aba ativa" data-aba="recursos">Recursos</button>' +
             '<button class="ikaext-btn-sec ikaext-imp-aba" data-aba="edificios">Edifícios</button>' +
+            '<button class="ikaext-btn-sec ikaext-imp-aba" data-aba="inventario">Inventário</button>' +
             '<button class="ikaext-btn-sec" id="ikaext-imp-abrir">↗ Abrir</button>' +
           '</div>' +
         '</div>' +
@@ -504,9 +505,15 @@ var IkaLookup = {
       );
 
       function pinta(aba) {
-        $('#ikaext-imp-tabela').html(aba === 'edificios'
-          ? IkaEmpire._renderEdificios(imp.cidades)
-          : IkaEmpire._renderRecursos(imp.cidades));
+        var html;
+        if (aba === 'edificios') {
+          html = IkaEmpire._renderEdificios(imp.cidades);
+        } else if (aba === 'inventario') {
+          html = IkaEmpire._renderInventario(imp.inventario || []);
+        } else {
+          html = IkaEmpire._renderRecursos(imp.cidades);
+        }
+        $('#ikaext-imp-tabela').html(html);
         empDiv.find('.ikaext-imp-aba').each(function() {
           $(this).toggleClass('ativa', $(this).data('aba') === aba);
         });

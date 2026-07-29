@@ -18,22 +18,7 @@ var IkaEmpire = {
   /* ============================ init ============================ */
 
   iniciar: function () {
-    if (document.getElementById('ikaext-btn-empire')) return;
     IkaEmpire._criarModal();
-
-    var t = setInterval(function () {
-      var menu = $('#leftMenu .menu_slots');
-      if (!menu.length) return;
-      clearInterval(t);
-      var item = $(
-        '<li id="ikaext-btn-empire" class="expandable" style="display:inline-block;width:53px;">' +
-          '<div class="image image_cityoverview"></div>' +
-          '<div class="name"><span class="namebox">Imperio</span></div>' +
-        '</li>'
-      );
-      item.on('click', function () { IkaEmpire.abrirModal(); });
-      menu.append(item);
-    }, 300);
   },
 
   // Lobby: botao flutuante para navegar nos imperios salvos por conta/servidor.
@@ -118,6 +103,19 @@ var IkaEmpire = {
       .ikaext-empire-prod { color: #2e7d32; font-size: 10px; margin-left: 4px; }
       .ikaext-res-icon { width: 20px; height: 20px; vertical-align: middle; display: block; margin: 0 auto; }
 
+      /* Inventário — usa os sprites originais do jogo */
+      .ikaext-inv-slots {
+        display: flex; flex-wrap: wrap; gap: 6px; padding: 12px;
+        background: #F5EDD6;
+      }
+      .ikaext-inv-slot {
+        position: relative; cursor: default;
+        border: 1px solid rgba(139,105,20,0.2); border-radius: 6px;
+        background: #EDE0BE; overflow: hidden;
+      }
+      .ikaext-inv-slot:hover { border-color: #C9A84C; background: #E5D5A8; }
+      .ikaext-inv-vazio { text-align: center; padding: 40px; color: #9A7A3A; font-style: italic; }
+
       /* Building sprite icons in header */
       th.ikagx-emp-building { width: 45px; padding: 2px 1px !important; text-align: center; }
       th.ikagx-emp-building div { height: 41px; width: 43px; background-repeat: no-repeat; margin: 0 auto; }
@@ -195,7 +193,8 @@ var IkaEmpire = {
         '</div>' +
         '<div id="ikaext-empire-abas">' +
           '<div class="ikaext-empire-aba ativa" data-aba="recursos">Recursos</div>' +
-          '<div class="ikaext-empire-aba" data-aba="edificios">Edificios</div>' +
+          '<div class="ikaext-empire-aba" data-aba="edificios">Edifícios</div>' +
+          '<div class="ikaext-empire-aba" data-aba="inventario">Inventário</div>' +
         '</div>' +
         '<div id="ikaext-empire-status"></div>' +
         '<div id="ikaext-empire-corpo"></div>' +
@@ -311,6 +310,73 @@ var IkaEmpire = {
 
   /* ============================ coleta ============================ */
 
+  // Processa respostas AJAX interceptadas do jogo — chamado pelo content.js
+  // Extrai dados da cidade atual sem fazer requisições extras
+  processarRespostaJogo: function (url, json) {
+    try {
+      // Só processa respostas que contenham dados de cidade (backgroundData + headerData)
+      var header   = IkaEmpire._primeiro(json, 'headerData');
+      var posicoes = IkaEmpire._acharPosicoes(json);
+      if (!header || !posicoes) return;
+
+      var servidor = window.location.hostname.split('.')[0];
+      var conta    = ($('#GF_toolbar .avatarName a[href*="optionsAccount"]').attr('title') || '').trim();
+      if (!servidor || !conta) return;
+
+      // Identifica a cidade a partir do dropdown atual
+      var titulo = $('#js_citySelectContainer .dropDownButton a').attr('title');
+      var cityId = $('#dropDown_js_citySelectContainer a[title="' + titulo + '"]').closest('li').attr('selectvalue');
+      if (!cityId) return;
+
+      var nomeCidade = titulo || ('Cidade ' + cityId);
+      var rec        = IkaEmpire._montarRecursos(header);
+      var townHall   = IkaEmpire._parsearTownHall(IkaEmpire._acharHtmlTownHall(json));
+
+      var dadosCidade = {
+        cityId:      cityId,
+        nome:        nomeCidade,
+        edificios:   IkaEmpire._parsearPosicoes(posicoes),
+        recursos:    rec ? rec.recursos    : null,
+        recursosMax: rec ? rec.recursosMax : null,
+        producao:    rec ? rec.producao    : null,
+        populacao:   townHall ? townHall.populacao  : null,
+        cientistas:  townHall ? townHall.cientistas : null,
+        cultura:     townHall ? townHall.cultura    : null
+      };
+
+      // Carrega os dados salvos, atualiza/insere a cidade e salva de volta
+      IkaLog.lerImperio(servidor, conta, function (salvo) {
+        var dados = salvo || {
+          coletadoEm: Date.now(),
+          servidor: servidor,
+          conta: conta,
+          cidades: []
+        };
+
+        // Substitui cidade existente ou adiciona
+        var idx = -1;
+        for (var i = 0; i < dados.cidades.length; i++) {
+          if (dados.cidades[i].cityId === cityId) { idx = i; break; }
+        }
+        if (idx >= 0) dados.cidades[idx] = dadosCidade;
+        else          dados.cidades.push(dadosCidade);
+
+        dados.coletadoEm = Date.now();
+        IkaLog.salvarImperio(servidor, conta, dados);
+
+        // Atualiza modal se estiver aberta
+        if ($('#ikaext-empire-overlay').hasClass('aberta')) {
+          IkaEmpire._dados = dados;
+          IkaEmpire._render();
+        }
+
+        console.log('[IkaGX] Cidade atualizada via interceptor:', nomeCidade);
+      });
+    } catch (e) {
+      console.warn('[IkaGX] processarRespostaJogo:', e);
+    }
+  },
+
   // Coleta dados em background sem abrir ou atualizar a modal
   coletarBackground: function () {
     var cidades = IkaEmpire._listarCidades();
@@ -326,21 +392,24 @@ var IkaEmpire = {
 
     function proxima() {
       if (i >= cidades.length) {
-        var dados = {
-          coletadoEm: Date.now(),
-          servidor: servidor,
-          conta: conta,
-          cidades: resultado
-        };
-        IkaLog.salvarImperio(servidor, conta, dados);
+        // Após cidades, coleta inventário
+        IkaEmpire._coletarInventario(function (inventario) {
+          var dados = {
+            coletadoEm: Date.now(),
+            servidor: servidor,
+            conta: conta,
+            cidades: resultado,
+            inventario: inventario || []
+          };
+          IkaLog.salvarImperio(servidor, conta, dados);
 
-        // Se a modal estiver aberta, atualiza a visualização
-        if ($('#ikaext-empire-overlay').hasClass('aberta')) {
-          IkaEmpire._dados = dados;
-          IkaEmpire._render();
-        }
+          if ($('#ikaext-empire-overlay').hasClass('aberta')) {
+            IkaEmpire._dados = dados;
+            IkaEmpire._render();
+          }
 
-        console.log('[IkaGX] Império salvo em background:', servidor, conta);
+          console.log('[IkaGX] Império + inventário salvos:', servidor, conta);
+        });
         return;
       }
 
@@ -353,6 +422,36 @@ var IkaEmpire = {
     }
 
     proxima();
+  },
+
+  // Busca itens do inventário via AJAX
+  _coletarInventario: function (quandoPronto) {
+    $.get('?view=inventory&ajax=1', function (data) {
+      try {
+        var json      = typeof data === 'string' ? JSON.parse(data) : data;
+        var inventory = json[1][1][2].viewScriptParams.inventory;
+        var itens     = [];
+
+        if (inventory && typeof inventory === 'object') {
+          Object.keys(inventory).forEach(function (itemId) {
+            var item = inventory[itemId];
+            itens.push({
+              id:         item.itemId   || itemId,
+              nome:       item.name     || ('Item ' + itemId),
+              quantidade: parseInt(item.count || item.amount || 1, 10),
+              cssClass:   item.cssClass || '',
+              tipo:       item.type     || ''
+            });
+          });
+        }
+
+        itens.sort(function (a, b) { return a.nome.localeCompare(b.nome); });
+        quandoPronto(itens);
+      } catch (e) {
+        console.warn('[IkaGX] Erro ao coletar inventário:', e);
+        quandoPronto([]);
+      }
+    }, 'json').fail(function () { quandoPronto([]); });
   },
 
   coletar: function () {
@@ -645,7 +744,29 @@ var IkaEmpire = {
 
     corpo.html(IkaEmpire._abaAtiva === 'edificios'
       ? IkaEmpire._renderEdificios(d.cidades)
-      : IkaEmpire._renderRecursos(d.cidades));
+      : IkaEmpire._abaAtiva === 'inventario'
+        ? IkaEmpire._renderInventario(d.inventario)
+        : IkaEmpire._renderRecursos(d.cidades));
+  },
+
+  _renderInventario: function (inventario) {
+    if (!inventario || !inventario.length) {
+      return '<div class="ikaext-inv-vazio">Nenhum item no inventário ou dados ainda não coletados.<br>Aguarde a coleta automática ou clique em "Atualizar".</div>';
+    }
+
+    var html = '<div class="ikaext-inv-slots">';
+    inventario.forEach(function (item) {
+      // Usa exatamente o mesmo HTML do jogo: cssClass + medium
+      // O nome aparece apenas no tooltip (title)
+      var titulo = item.quantidade + 'x ' + IkaEmpire._esc(item.nome);
+      html +=
+        '<div class="itemSlot item ikaext-inv-slot" title="' + titulo + '" itemid="' + item.id + '">' +
+          '<div class="' + IkaEmpire._esc(item.cssClass) + ' medium"></div>' +
+          '<div class="count"><div>' + item.quantidade + '</div></div>' +
+        '</div>';
+    });
+    html += '</div>';
+    return html;
   },
 
   _fmt: function (n) {

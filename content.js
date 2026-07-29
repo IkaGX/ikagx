@@ -40,7 +40,6 @@ if (!estaNoLobby) {
       IkaEmpire.iniciar();
 
       // Coleta dados do império em background, sem precisar abrir a modal
-      // Aguarda 3s para garantir que o DOM do jogo esteja completo
       setTimeout(function () {
         IkaEmpire.coletarBackground();
       }, 3000);
