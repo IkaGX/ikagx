@@ -32,153 +32,7 @@ var IkaEmpire = {
   _criarModal: function () {
     if (document.getElementById('ikaext-empire-overlay')) return;
 
-    var css = `
-      #ikaext-empire-overlay {
-        display: none; position: fixed; inset: 0;
-        background: rgba(50,30,0,0.55); backdrop-filter: blur(4px);
-        z-index: 10001; justify-content: center; align-items: center;
-        font-family: Inter, sans-serif;
-      }
-      #ikaext-empire-overlay.aberta { display: flex; }
 
-      #ikaext-empire-modal {
-        background: #F5EDD6; border-radius: 16px;
-        width: 1180px; max-width: 96vw; max-height: 90vh;
-        display: flex; flex-direction: column;
-        border: 1.5px solid rgba(139,105,20,0.2);
-        box-shadow: 0 12px 40px rgba(100,70,0,0.22);
-        animation: ikaEmpFade 0.18s ease; overflow: hidden;
-      }
-      @keyframes ikaEmpFade { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
-
-      #ikaext-empire-header {
-        padding: 14px 20px; border-bottom: 1px solid rgba(139,105,20,0.15);
-        display: flex; align-items: center; gap: 12px; background: #EDE0BE; position: relative;
-      }
-      #ikaext-empire-titulo {
-        font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600;
-        color: #3D2B00; margin: 0; letter-spacing: 0.02em; margin-right: auto;
-      }
-      #ikaext-empire-marca { font-family: 'Cinzel', serif; font-size: 11px; color: #9A7A3A; letter-spacing: 0.08em; margin-right: 6px; }
-      #ikaext-empire-fechar {
-        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
-        border-radius: 8px; width: 28px; height: 28px; cursor: pointer;
-        color: #9A7A3A; font-size: 14px; display: flex; align-items: center; justify-content: center;
-      }
-      #ikaext-empire-fechar:hover { color: #8B6914; border-color: #C9A84C; }
-
-      .ikaext-empire-btn {
-        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
-        border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 500;
-        color: #6B4E1A; cursor: pointer; font-family: Inter, sans-serif;
-      }
-      .ikaext-empire-btn:hover { border-color: #C9A84C; color: #3D2B00; }
-
-      #ikaext-empire-abas { display: flex; gap: 6px; padding: 10px 20px 0; background: #EDE0BE; }
-      .ikaext-empire-aba {
-        padding: 7px 18px; border: 1px solid rgba(139,105,20,0.2); border-bottom: none;
-        border-radius: 8px 8px 0 0; cursor: pointer; font-size: 13px; font-weight: 500;
-        background: #E5D5A8; color: #6B4E1A;
-      }
-      .ikaext-empire-aba.ativa { background: #F5EDD6; color: #3D2B00; font-weight: 700; }
-
-      #ikaext-empire-status { padding: 6px 20px; font-size: 11px; color: #9A7A3A; min-height: 14px; }
-
-      #ikaext-empire-corpo { overflow: auto; padding: 0 20px 18px; flex: 1; }
-      #ikaext-empire-corpo::-webkit-scrollbar { height: 10px; width: 10px; }
-      #ikaext-empire-corpo::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 6px; }
-
-      .ikaext-empire-vazio { text-align: center; padding: 40px; color: #9A7A3A; font-style: italic; }
-
-      .ikaext-empire-tabela { border-collapse: collapse; font-size: 12px; width: 100%; background: #F5EDD6; }
-      .ikaext-empire-tabela th, .ikaext-empire-tabela td {
-        border: 1px solid rgba(139,105,20,0.18); padding: 4px 8px; text-align: right; white-space: nowrap; color: #3D2B00;
-      }
-      .ikaext-empire-tabela th { background: #EDE0BE; position: sticky; top: 0; z-index: 2; color: #6B4E1A; font-weight: 600; }
-      .ikaext-empire-tabela td.ikaext-empire-cidade, .ikaext-empire-tabela th.ikaext-empire-cidade {
-        position: sticky; left: 0; text-align: left; background: #EDE0BE; z-index: 1; font-weight: 600;
-      }
-      .ikaext-empire-tabela th.ikaext-empire-cidade { z-index: 3; }
-      .ikaext-empire-tabela tbody tr:hover td { background: rgba(201,168,76,0.08); }
-      .ikaext-empire-prod { color: #2e7d32; font-size: 10px; margin-left: 4px; }
-      .ikaext-res-icon { width: 20px; height: 20px; vertical-align: middle; display: block; margin: 0 auto; }
-
-      /* Inventário — usa os sprites originais do jogo */
-      .ikaext-inv-slots {
-        display: flex; flex-wrap: wrap; gap: 6px; padding: 12px;
-        background: #F5EDD6;
-      }
-      .ikaext-inv-slot {
-        position: relative; cursor: default;
-        border: 1px solid rgba(139,105,20,0.2); border-radius: 6px;
-        background: #EDE0BE; overflow: hidden;
-      }
-      .ikaext-inv-slot:hover { border-color: #C9A84C; background: #E5D5A8; }
-      .ikaext-inv-vazio { text-align: center; padding: 40px; color: #9A7A3A; font-style: italic; }
-
-      /* Building sprite icons in header */
-      th.ikagx-emp-building { width: 45px; padding: 2px 1px !important; text-align: center; }
-      th.ikagx-emp-building div { height: 41px; width: 43px; background-repeat: no-repeat; margin: 0 auto; }
-      .ikagx-emp-building-townHall div       { background-position: 0 0; }
-      .ikagx-emp-building-academy div        { background-position: -43px 0; }
-      .ikagx-emp-building-warehouse div      { background-position: -86px 0; }
-      .ikagx-emp-building-tavern div         { background-position: -129px 0; }
-      .ikagx-emp-building-palace div         { background-position: -172px 0; }
-      .ikagx-emp-building-palaceColony div   { background-position: -215px 0; }
-      .ikagx-emp-building-museum div         { background-position: -258px 0; }
-      .ikagx-emp-building-port div           { background-position: -301px 0; }
-      .ikagx-emp-building-shipyard div       { background-position: -345px 0; }
-      .ikagx-emp-building-barracks div       { background-position: -388px 0; }
-      .ikagx-emp-building-wall div           { background-position: -431px 0; }
-      .ikagx-emp-building-embassy div        { background-position: -474px 0; }
-      .ikagx-emp-building-branchOffice div   { background-position: -517px 0; }
-      .ikagx-emp-building-workshop div       { background-position: -560px 0; }
-      .ikagx-emp-building-safehouse div      { background-position: -603px 0; }
-      .ikagx-emp-building-forester div       { background-position: -646px 0; }
-      .ikagx-emp-building-glassblowing div   { background-position: -689px 0; }
-      .ikagx-emp-building-alchemist div      { background-position: -733px 0; }
-      .ikagx-emp-building-winegrower div     { background-position: -776px 0; }
-      .ikagx-emp-building-stonemason div     { background-position: -819px 0; }
-      .ikagx-emp-building-carpentering div   { background-position: -862px 0; }
-      .ikagx-emp-building-optician div       { background-position: -905px 0; }
-      .ikagx-emp-building-fireworker div     { background-position: -948px 0; }
-      .ikagx-emp-building-vineyard div       { background-position: -991px 0; }
-      .ikagx-emp-building-architect div      { background-position: -1034px 0; }
-      .ikagx-emp-building-temple div         { background-position: -1077px 0; }
-      .ikagx-emp-building-dump div           { background-position: -1121px 0; }
-      .ikagx-emp-building-pirateFortress div { background-position: -1164px 0; }
-      .ikagx-emp-building-blackMarket div    { background-position: -1207px 0; }
-      .ikagx-emp-building-marineChartArchive div { background-position: -1297px 0; }
-      .ikagx-emp-building-shrineOfOlympus div { background-position: -1250px 0; }
-
-      .ikaext-empire-srv { font-family: 'Cinzel', serif; font-size: 13px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.08em; margin: 16px 0 8px; }
-      .ikaext-empire-item {
-        display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 6px;
-        background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15); border-radius: 10px; cursor: pointer;
-      }
-      .ikaext-empire-item:hover { border-color: #C9A84C; background: #E5D5A8; }
-      .ikaext-empire-item-av {
-        width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; background: #E5D5A8;
-        border: 1.5px solid #C9A84C; display: flex; align-items: center; justify-content: center;
-        font-size: 14px; font-weight: 700; color: #8B6914;
-      }
-      .ikaext-empire-item-info { flex: 1; min-width: 0; }
-      .ikaext-empire-item-nome { font-size: 13px; font-weight: 600; color: #3D2B00; }
-      .ikaext-empire-item-meta { font-size: 11px; color: #9A7A3A; }
-      .ikaext-empire-item-seta { color: #9A7A3A; font-size: 16px; }
-
-      #ikaext-btn-imperios {
-        position: fixed; bottom: 20px; right: 190px; z-index: 9999;
-        background: #EDE0BE; color: #8B6914;
-        border: 1px solid rgba(139,105,20,0.2); border-radius: 8px;
-        padding: 9px 16px; font-size: 13px; cursor: pointer;
-        font-family: Inter, sans-serif; font-weight: 600;
-        box-shadow: 0 8px 32px rgba(100,70,0,0.18);
-      }
-      #ikaext-btn-imperios:hover { background: #E5D5A8; }
-    `;
-
-    $('<style id="ikaext-empire-estilos">').text(css).appendTo('head');
 
     var overlay = $('<div id="ikaext-empire-overlay">');
     var modal = $(
@@ -502,6 +356,7 @@ var IkaEmpire = {
   },
 
   _coletarCidade: function (cidade, token, cb) {
+    // backgroundView=city é necessário para o jogo retornar backgroundData.position (edifícios)
     var url = '?view=townHall&cityId=' + cidade.id +
       '&position=0&backgroundView=city&currentCityId=' + cidade.id + '&ajax=1';
     if (token) url += '&actionRequest=' + token;
@@ -512,10 +367,23 @@ var IkaEmpire = {
       catch (e) { cb(IkaEmpire._cidadeVazia(cidade), null); return; }
 
       var novoToken = IkaEmpire._primeiro(json, 'actionRequest');
-      var posicoes  = IkaEmpire._acharPosicoes(json);
       var header    = IkaEmpire._primeiro(json, 'headerData');
       var townHall  = IkaEmpire._parsearTownHall(IkaEmpire._acharHtmlTownHall(json));
       var rec       = IkaEmpire._montarRecursos(header);
+
+      // Extrai position diretamente do backgroundData dentro do updateGlobalData
+      var posicoes = null;
+      for (var i = 0; i < json.length; i++) {
+        if (Array.isArray(json[i]) && json[i][0] === 'updateGlobalData') {
+          var bg = json[i][1] && json[i][1].backgroundData;
+          if (bg && Array.isArray(bg.position) && bg.position.length > 0) {
+            posicoes = bg.position;
+            break;
+          }
+        }
+      }
+      // Fallback: deepCollect
+      if (!posicoes) posicoes = IkaEmpire._acharPosicoes(json);
 
       cb({
         cityId: cidade.id,

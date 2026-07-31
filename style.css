@@ -1,0 +1,1555 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/**
+ * IkaGX - style.css
+ * CSS centralizado: estilos da extensão + classes do jogo necessárias para
+ * renderizar ícones de inventário (itemIcon, itemSlot) fora do contexto do jogo.
+ *
+ * Seções:
+ *  1. Variáveis e reset
+ *  2. itemSlot / itemIcon (extraído do Ikariam para funcionar no lobby)
+ *  3. Modal Histórico de IPs
+ *  4. Modal de Perfil / Detalhes
+ *  5. Modal Império
+ */
+
+/* ══════════════════════════════════════════════════════════════════
+   1. VARIÁVEIS
+══════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:      #F5EDD6;
+  --bg-card: #EDE0BE;
+  --bg-deep: #E5D5A8;
+  --gold:    #8B6914;
+  --gold-lt: #C9A84C;
+  --text:    #3D2B00;
+  --text-2:  #6B4E1A;
+  --text-3:  #9A7A3A;
+  --border:  rgba(139,105,20,0.2);
+  --shadow:  0 8px 32px rgba(100,70,0,0.18);
+
+  --dark-bg:      #0F172A;
+  --dark-card:    #1E293B;
+  --dark-deep:    #162032;
+  --dark-gold:    #C9A84C;
+  --dark-text:    #E2E8F0;
+  --dark-text-2:  #94A3B8;
+  --dark-text-3:  #64748B;
+  --dark-border:  rgba(255,255,255,0.08);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   2. ITEM ICON / ITEM SLOT (extraído do Ikariam — necessário no lobby)
+══════════════════════════════════════════════════════════════════ */
+.itemSlot {
+    float: left;
+    height: 90px;
+    width: 70px;
+    background: url(//gf3.geo.gfsrv.net/cdne6/059b7fdf048d8b8d40faee711dc6f9.png) no-repeat;
+}
+
+.itemSlot.item {
+    background-position: -70px 0;
+    cursor: pointer;
+}
+
+.itemSlot.item:hover {
+    background-position: -210px 0;
+}
+
+.itemSlot.item.active{
+    background-position: -140px 0;
+}
+
+.itemIcon {
+    margin: 5px 0 3px 5px;
+}
+
+.itemSlot .count {
+    line-height: 16px;
+    text-align: center;
+    font-size: 13pt;
+}
+
+#inventory .inventoryPaginator {
+    margin: -2px 0 0 73px;
+    width: 101px;
+    height: 34px;
+    padding: 0 195px;
+    border: #ddbf81 solid 2px;
+    border-top-width: 0;
+}
+
+#inventory .inventoryPaginator img {
+    position: absolute;
+}
+
+#inventory .inventoryPaginator .inventoryBack    {
+    margin-top: 5px;
+    left: 283px;
+}
+#inventory .inventoryPaginator .inventoryForward {
+    margin-left: -24px;
+    left: 377px;
+}
+
+#inventory .inventoryPaginator .inventoryPage {
+    display: inline-block;
+    height: 30px;
+    width: 46px;
+    padding: 0 24px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 30px;
+}
+
+
+.itemIcon.small, .itemIcon.small:before, .itemIcon.small:after {
+    width: 34px;
+    height: 34px;
+}
+
+.itemIcon.medium, .itemIcon.medium:before, .itemIcon.medium:after {
+    width: 60px;
+    height: 60px;
+}
+
+.itemIcon.large, .itemIcon.large:before, .itemIcon.large:after {
+    width: 98px;
+    height: 98px;
+}
+
+.itemIcon.xl, .itemIcon.xl:before, .itemIcon.xl:after {
+    width: 150px;
+    height: 150px;
+}
+
+.itemIcon.medium, .itemIcon.medium:before, .itemIcon.medium:after {
+    width: 60px;
+    height: 60px;
+}
+
+.premiumOffer .itemIcon, #inventory .inventoryDetailsBox .itemIcon {
+    margin: 0 auto;
+}
+
+.itemIcon.small:after {
+    top: -34px;
+}
+
+.itemIcon.medium:after {
+    top: -60px;
+}
+
+.itemIcon.large:after {
+    top: -98px;
+}
+
+.itemIcon.xl:after {
+    top: -150px;
+}
+
+.itemIcon:before, .itemIcon:after {
+    content: "";
+    display: block;
+    position: relative;
+}
+
+.itemIcon.small {
+    background: url(//gf3.geo.gfsrv.net/cdn2c/d31a524d4592a87a77cc793c9fcd2f.jpg) no-repeat;
+}
+
+.itemIcon.small:before {
+    background: url(//gf1.geo.gfsrv.net/cdn3b/6e0ea5adf1e9556015d0b88ccad171.png) no-repeat;
+    background-position: -748px 0;
+}
+
+.itemIcon.merge.small:after {
+    background: url(//gf2.geo.gfsrv.net/cdn40/004f7c48b7fff9df96570d4d827c2e.png) no-repeat;
+}
+
+.itemIcon.medium {
+    background: url(//gf2.geo.gfsrv.net/cdn70/c2fd611779d0cc6f8f7ad34ff990da.jpg) no-repeat;
+}
+
+.itemIcon.medium:before {
+    background: url(//gf1.geo.gfsrv.net/cdnc5/9ded8bb207674a544eed47a067bb5c.png) no-repeat;
+    background-position: -1440px 0;
+}
+
+.itemIcon.days.medium:after, .itemIcon.troopsPackage.medium:after, .itemIcon.citizensPackage.medium:after,
+.itemIcon.goodsPackage.medium:after, .itemIcon.barbarianTruce.medium:after, .itemIcon.medium.recruitmentSpeedUp:after,
+.itemIcon.medium.increaseResearchPoints:after, .itemIcon.medium.actionPointsLimitIncrease:after {
+    background: url(//gf2.geo.gfsrv.net/cdn14/d164f0c467dfc65a6e02fe290ebf86.png) no-repeat;
+}
+
+.itemIcon.merge.medium:after {
+    background: url(//gf1.geo.gfsrv.net/cdn62/022e21949d3f74ed9adb3c9a6714ad.png) no-repeat 0 -360px;
+}
+
+.itemIcon.large {
+    background: url(//gf1.geo.gfsrv.net/cdnce/0f3a12dbd45ceead1c5c084a0727ec.jpg) no-repeat;
+}
+
+.itemIcon.large:before {
+    background: url(//gf2.geo.gfsrv.net/cdn73/b4621f2a3ccd6951d2e9c49c24bff1.png) no-repeat;
+    background-position: -2352px 0;
+}
+.itemIcon.days.large:after, .itemIcon.troopsPackage.large:after, .itemIcon.citizensPackage.large:after,
+.itemIcon.goodsPackage.large:after, .itemIcon.barbarianTruce.large:after, .itemIcon.large.recruitmentSpeedUp:after,
+.itemIcon.large.increaseResearchPoints:after, .itemIcon.large.actionPointsLimitIncrease:after {
+    background: url(//gf1.geo.gfsrv.net/cdnca/36ab06ae922834dd8d6c98282a38fe.png) no-repeat top left;
+}
+.itemIcon.merge.large:after {
+    background: url(//gf2.geo.gfsrv.net/cdn4f/80b16f348818c4f3c30f10fefe8969.png) no-repeat 0 -360px;
+}
+
+.itemIcon.xl {
+    background: url(//gf1.geo.gfsrv.net/cdn30/357c4c3c1106a6c0fdc864dfd4336d.jpg) no-repeat;
+}
+.itemIcon.xl:before {
+    background: url(//gf1.geo.gfsrv.net/cdn63/7f4a9bc46bb909f7db21e123ed0924.png) no-repeat;
+    background-position: -3600px 0;
+}
+.itemIcon.days.xl:after, .itemIcon.troopsPackage.xl:after, .itemIcon.citizensPackage.xl:after,
+.itemIcon.goodsPackage.xl:after, .itemIcon.barbarianTruce.xl:after,
+.itemIcon.xl.recruitmentSpeedUp:after, .itemIcon.xl.actionPointsLimitIncrease:after {
+    background: url(//gf3.geo.gfsrv.net/cdnb2/9669a125e14ae35b9295c098e2e3f3.png) no-repeat;
+}
+.itemIcon.merge.xl:after {
+    background: url(//gf3.geo.gfsrv.net/cdn5b/d3dadbbfbf4b7f7a6b3d17033dcd78.png) no-repeat 0 -950px;
+}
+
+
+.itemIcon.small.abyssalAmbush:before, 
+.itemIcon.small.actionPointsLimitIncrease:before,
+.itemIcon.small.convertBoosterBuilding:before {
+    background: url(//gf3.geo.gfsrv.net/cdn82/b082872c0329b2f612478a8d43bf3e.png) no-repeat;
+}
+
+.itemIcon.medium.abyssalAmbush:before, 
+.itemIcon.medium.actionPointsLimitIncrease:before,
+.itemIcon.medium.convertBoosterBuilding:before {
+    background: url(//gf3.geo.gfsrv.net/cdnb1/56b9ee464e0c103730f7cdc755c759.png) no-repeat;
+}
+
+.itemIcon.large.abyssalAmbush:before, 
+.itemIcon.large.actionPointsLimitIncrease:before,
+.itemIcon.large.convertBoosterBuilding:before {
+    background: url(//gf3.geo.gfsrv.net/cdnbf/88286784d86578bddbe2e8ff12405b.png) no-repeat;
+}
+
+.itemIcon.xl.abyssalAmbush:before, 
+.itemIcon.xl.actionPointsLimitIncrease:before,
+.itemIcon.xl.convertBoosterBuilding:before {
+    background: url(//gf2.geo.gfsrv.net/cdn46/f11efe672dfc1f6974b86125057bd6.png) no-repeat;
+}
+
+.itemIcon.small.premiumAccount:before { background-position: 0 0; }
+.itemIcon.small.accountTransferCoin:before { background-position: -34px 0;}
+.itemIcon.small.resourceBonus:before { background-position: -68px 0; }
+.itemIcon.small.wineBonus:before { background-position: -102px 0; }
+.itemIcon.small.marbleBonus:before { background-position: -136px 0; }
+.itemIcon.small.sulfurBonus:before { background-position: -170px 0; }
+.itemIcon.small.crystalBonus:before { background-position: -204px 0; }
+.itemIcon.small.safeCapacityBonus:before { background-position: -238px 0; }
+.itemIcon.small.storageCapacityBonus:before { background-position: -272px 0; }
+.itemIcon.small.researchPointsBonus:before { background-position: -306px 0; }
+.itemIcon.small.tradeRouteCoin:before { background-position: -340px 0; }
+.itemIcon.small.premiumDummyPackageSmall:before { background-position: -374px 0; }
+.itemIcon.small.premiumDummyPackageMedium:before { background-position: -408px 0; }
+.itemIcon.small.premiumDummyPackageBig:before { background-position: -442px 0; }
+.itemIcon.small.winePackage:before { background-position: -476px 0; }
+.itemIcon.small.marblePackage:before { background-position: -510px 0; }
+.itemIcon.small.crystalPackage:before { background-position: -544px 0; }
+.itemIcon.small.sulfurPackage:before { background-position: -578px 0; }
+.itemIcon.small.resourcePackage:before { background-position: -612px 0; }
+.itemIcon.small.putPlague:before { background-position: -646px 0; }
+.itemIcon.small.plagueProtection:before { background-position: -680px 0; }
+.itemIcon.small.premiumTraderCoin:before { background-position: -714px 0; }
+.itemIcon.small.heliosTowerOil:before { background-position: -782px 0; }
+.itemIcon.small.badTaxAccountant:before { background-position: -816px 0; }
+.itemIcon.small.culturalTreatyCoin:before { background-position: -850px 0; }
+.itemIcon.small.heliosTowerCoin:before { background-position: -884px 0; }
+.itemIcon.small.tritonEnginesCoin:before { background-position: -918px 0; }
+.itemIcon.small.archiveMessageCoin:before { background-position: -952px 0; }
+.itemIcon.small.archiveEspionageReportCoin:before { background-position: -986px 0; }
+.itemIcon.small.moveCityCoin:before { background-position: -1020px 0; }
+.itemIcon.small.moveIslandSpotCoin:before { background-position: -1054px 0; }
+.itemIcon.small.colonizeIslandSpotCoin:before { background-position: -1088px 0; }
+.itemIcon.small.barbarianMapPiece:before { background-position: -1122px 0; }
+.itemIcon.small.goldPackage:before { background-position: -1156px 0; }
+.itemIcon.small.tradegoodBonus:before { background-position: -1190px 0; }
+.itemIcon.small.troopInfoCoin:before { background-position: -1224px 0; }
+.itemIcon.small.convertCapturePointsCoin:before { background-position: -1258px 0; }
+.itemIcon.small.troopsPackage.s309:before { background-position: -1292px 0; }
+.itemIcon.small.troopsPackage.s313:before { background-position: -1326px 0; }
+.itemIcon.small.troopsPackage.s308:before { background-position: -1360px 0; }
+.itemIcon.small.troopsPackage.s311:before { background-position: -1394px 0; }
+.itemIcon.small.troopsPackage.s312:before { background-position: -1428px 0; }
+.itemIcon.small.troopsPackage.s303:before { background-position: -1462px 0; }
+.itemIcon.small.troopsPackage.s306:before { background-position: -1496px 0; }
+.itemIcon.small.troopsPackage.s310:before { background-position: -1530px 0; }
+.itemIcon.small.troopsPackage.s305:before { background-position: -1564px 0; }
+.itemIcon.small.troopsPackage.s307:before { background-position: -1598px 0; }
+.itemIcon.small.troopsPackage.s304:before { background-position: -1632px 0; }
+.itemIcon.small.troopsPackage.s302:before { background-position: -1666px 0; }
+.itemIcon.small.troopsPackage.s315:before { background-position: -1700px 0; }
+.itemIcon.small.troopsPackage.s301:before { background-position: -1734px 0; }
+.itemIcon.small.troopsPackage.s213:before { background-position: -1768px 0; }
+.itemIcon.small.troopsPackage.s219:before { background-position: -1802px 0; }
+.itemIcon.small.troopsPackage.s216:before { background-position: -1836px 0; }
+.itemIcon.small.troopsPackage.s211:before { background-position: -1870px 0; }
+.itemIcon.small.troopsPackage.s214:before { background-position: -1904px 0; }
+.itemIcon.small.troopsPackage.s215:before { background-position: -1938px 0; }
+.itemIcon.small.troopsPackage.s217:before { background-position: -1972px 0; }
+.itemIcon.small.troopsPackage.s210:before { background-position: -2006px 0; }
+.itemIcon.small.troopsPackage.s218:before { background-position: -2040px 0; }
+.itemIcon.small.troopsPackage.s212:before { background-position: -2074px 0; }
+.itemIcon.small.troopsPackage.s220:before { background-position: -2108px 0; }
+.itemIcon.small.citizensPackage:before { background-position: -2142px 0; }
+.itemIcon.small.femaleAdvisor:before { background-position: -2176px 0; }
+.itemIcon.small.halloweenAdvisor:before { background-position: -2210px 0; }
+.itemIcon.small.halloweenCity:before { background-position: -2244px 0; }
+.itemIcon.small.barbarianTruce:before { background-position: -2278px 0; }
+.itemIcon.small.barbarianAdvisor:before { background-position: -2312px 0; }
+.itemIcon.small.winterAdvisor:before { background-position: -2346px 0; }
+.itemIcon.small.winterCity:before { background-position: -2380px 0; }
+.itemIcon.small.christmasAdvisor:before { background-position: -2414px 0; }
+.itemIcon.small.christmasCity:before { background-position: -2448px 0; }
+.itemIcon.small.easterAdvisor:before { background-position: -2482px 0; }
+.itemIcon.small.easterCity:before { background-position: -2516px 0; }
+.itemIcon.small.troopsPackage.s319:before { background-position: -2584px 0; }
+.itemIcon.small.softMerge:before { background-position: -2618px 0; }
+.itemIcon.small.accountTransfer.city0:before { background-position: -2652px 0; }
+.itemIcon.small.accountTransfer.city1:before { background-position: -2686px 0; }
+.itemIcon.small.accountTransfer.city2:before { background-position: -2720px 0; }
+.itemIcon.small.accountTransfer.city3:before { background-position: -2754px 0; }
+.itemIcon.small.accountTransfer.city4:before { background-position: -2788px 0; }
+.itemIcon.small.accountTransfer.city5:before { background-position: -2822px 0; }
+.itemIcon.small.accountTransfer.city6:before { background-position: -2856px 0; }
+.itemIcon.small.accountTransfer.city7:before { background-position: -2890px 0; }
+.itemIcon.small.accountTransfer.city8:before { background-position: -2924px 0; }
+.itemIcon.small.accountTransfer.city9:before { background-position: -2958px 0; }
+.itemIcon.small.accountTransfer.city10:before { background-position: -2992px 0; }
+.itemIcon.small.accountTransfer.city11:before { background-position: -3026px 0; }
+.itemIcon.small.accountTransfer.city12:before { background-position: -3060px 0; }
+.itemIcon.small.accountTransfer.city13:before { background-position: -3094px 0; }
+.itemIcon.small.accountTransfer.city14:before { background-position: -3128px 0; }
+.itemIcon.small.accountTransfer.city15:before { background-position: -3162px 0; }
+.itemIcon.small.accountTransfer.city16:before { background-position: -3196px 0; }
+.itemIcon.small.accountTransfer.city17:before { background-position: -3230px 0; }
+.itemIcon.small.accountTransfer.city18:before { background-position: -3264px 0; }
+.itemIcon.small.accountTransfer.city19:before { background-position: -3298px 0; }
+.itemIcon.small.accountTransfer.city20:before { background-position: -3332px 0; }
+.itemIcon.small.accountTransfer.city21:before { background-position: -3366px 0; }
+.itemIcon.small.dailyRewardBoostPlutus:before     { background-position: -3500px 0; }
+.itemIcon.small.dailyRewardBoostTyche:before      { background-position: -3534px 0; }
+.itemIcon.small.dailyRewardBoostDionysus:before   { background-position: -3568px 0; }
+.itemIcon.small.dailyRewardBoostPan:before        { background-position: -3602px 0; }
+.itemIcon.small.dailyRewardBoostTheia:before      { background-position: -3636px 0; }
+.itemIcon.small.dailyRewardBoostHephaestos:before { background-position: -3670px 0; }
+.itemIcon.small.bronzeFleece:before { background-position: -3400px 0; }
+.itemIcon.small.silverFleece:before { background-position: -3434px 0; }
+.itemIcon.small.goldenFleece:before { background-position: -3468px 0; }
+.itemIcon.small.abyssalAmbush.recruitmentSpeedUp:before { background-position: 0 0; }
+.itemIcon.small.abyssalAmbush.increaseGodFavour:before { background-position: -34px 0; }
+.itemIcon.small.abyssalAmbush.increaseResearchPoints:before { background-position: -68px 0; }
+.itemIcon.small.abyssalAmbush.reduceExperimentCost:before { background-position: -102px 0; }
+.itemIcon.small.actionPointsLimitIncrease.actionPoints2:before { background-position: -136px 0; }
+.itemIcon.small.actionPointsLimitIncrease.actionPoints4:before { background-position: -170px 0; }
+.itemIcon.small.convertBoosterBuilding:before { background-position: -204px 0; }
+
+
+.itemIcon.medium.premiumAccount:before { background-position: 0 0; }
+.itemIcon.medium.accountTransferCoin:before { background-position: -60px 0; }
+.itemIcon.medium.resourceBonus:before { background-position: -120px 0; }
+.itemIcon.medium.wineBonus:before { background-position: -180px 0; }
+.itemIcon.medium.marbleBonus:before { background-position: -240px 0;}
+.itemIcon.medium.sulfurBonus:before { background-position: -300px 0; }
+.itemIcon.medium.crystalBonus:before { background-position: -360px 0; }
+.itemIcon.medium.safeCapacityBonus:before { background-position: -420px 0; }
+.itemIcon.medium.storageCapacityBonus:before { background-position: -480px 0; }
+.itemIcon.medium.researchPointsBonus:before { background-position: -540px 0; }
+.itemIcon.medium.tradeRouteCoin:before { background-position: -600px 0; }
+.itemIcon.medium.premiumDummyPackageSmall:before { background-position: -660px 0; }
+.itemIcon.medium.premiumDummyPackageMedium:before { background-position: -720px 0; }
+.itemIcon.medium.premiumDummyPackageBig:before { background-position: -780px 0; }
+.itemIcon.medium.winePackage:before { background-position: -840px 0; }
+.itemIcon.medium.marblePackage:before { background-position: -900px 0; }
+.itemIcon.medium.crystalPackage:before { background-position: -960px 0; }
+.itemIcon.medium.sulfurPackage:before { background-position: -1020px 0; }
+.itemIcon.medium.resourcePackage:before { background-position: -1080px 0; }
+.itemIcon.medium.putPlague:before { background-position: -1140px 0; }
+.itemIcon.medium.plagueProtection:before { background-position: -1200px 0; }
+.itemIcon.medium.wineBonus.days:before { background-position: -1260px 0; }
+.itemIcon.medium.safeCapacityBonus.days:before { background-position: -1320px 0; }
+.itemIcon.medium.premiumTraderCoin:before { background-position: -1380px 0; }
+.itemIcon.medium.heliosTowerOil:before { background-position: -1500px 0; }
+.itemIcon.medium.badTaxAccountant:before { background-position: -1560px 0; }
+.itemIcon.medium.culturalTreatyCoin:before { background-position: -1620px 0; }
+.itemIcon.medium.heliosTowerCoin:before { background-position: -1680px 0; }
+.itemIcon.medium.tritonEnginesCoin:before { background-position: -1740px 0; }
+.itemIcon.medium.archiveMessageCoin:before { background-position: -1800px 0; }
+.itemIcon.medium.archiveEspionageReportCoin:before { background-position: -1860px 0; }
+.itemIcon.medium.moveCityCoin:before { background-position: -1920px 0; }
+.itemIcon.medium.moveIslandSpotCoin:before { background-position: -1980px 0; }
+.itemIcon.medium.colonizeIslandSpotCoin:before { background-position: -2040px 0; }
+.itemIcon.medium.barbarianMapPiece:before { background-position: -2100px 0; }
+.itemIcon.medium.goldPackage:before { background-position: -2160px 0; }
+.itemIcon.medium.tradegoodBonus:before { background-position: -2220px 0; }
+.itemIcon.medium.troopInfoCoin:before { background-position: -2280px 0; }
+.itemIcon.medium.convertCapturePointsCoin:before { background-position: -2340px 0; }
+.itemIcon.medium.troopsPackage.s309:before { background-position: -2400px 0; }
+.itemIcon.medium.troopsPackage.s313:before { background-position: -2460px 0; }
+.itemIcon.medium.troopsPackage.s308:before { background-position: -2520px 0; }
+.itemIcon.medium.troopsPackage.s311:before { background-position: -2580px 0; }
+.itemIcon.medium.troopsPackage.s312:before { background-position: -2640px 0; }
+.itemIcon.medium.troopsPackage.s303:before { background-position: -2700px 0; }
+.itemIcon.medium.troopsPackage.s306:before { background-position: -2760px 0; }
+.itemIcon.medium.troopsPackage.s310:before { background-position: -2820px 0; }
+.itemIcon.medium.troopsPackage.s305:before { background-position: -2880px 0; }
+.itemIcon.medium.troopsPackage.s307:before { background-position: -2940px 0; }
+.itemIcon.medium.troopsPackage.s304:before { background-position: -3000px 0; }
+.itemIcon.medium.troopsPackage.s302:before { background-position: -3060px 0; }
+.itemIcon.medium.troopsPackage.s315:before { background-position: -3120px 0; }
+.itemIcon.medium.troopsPackage.s301:before { background-position: -3180px 0; }
+.itemIcon.medium.troopsPackage.s213:before { background-position: -3240px 0; }
+.itemIcon.medium.troopsPackage.s219:before { background-position: -3300px 0; }
+.itemIcon.medium.troopsPackage.s216:before { background-position: -3360px 0; }
+.itemIcon.medium.troopsPackage.s211:before { background-position: -3420px 0; }
+.itemIcon.medium.troopsPackage.s214:before { background-position: -3480px 0; }
+.itemIcon.medium.troopsPackage.s215:before { background-position: -3540px 0; }
+.itemIcon.medium.troopsPackage.s217:before { background-position: -3600px 0; }
+.itemIcon.medium.troopsPackage.s210:before { background-position: -3660px 0; }
+.itemIcon.medium.troopsPackage.s218:before { background-position: -3720px 0; }
+.itemIcon.medium.troopsPackage.s212:before { background-position: -3780px 0; }
+.itemIcon.medium.troopsPackage.s220:before { background-position: -3840px 0; }
+.itemIcon.medium.citizensPackage:before { background-position: -3900px 0; }
+.itemIcon.medium.femaleAdvisor:before { background-position: -3960px 0; }
+.itemIcon.medium.halloweenAdvisor:before { background-position: -4020px 0; }
+.itemIcon.medium.halloweenCity:before { background-position: -4080px 0; }
+.itemIcon.medium.barbarianTruce:before { background-position: -4140px 0; }
+.itemIcon.medium.barbarianAdvisor:before { background-position: -4200px 0; }
+.itemIcon.medium.winterAdvisor:before { background-position: -4260px 0; }
+.itemIcon.medium.winterCity:before { background-position: -4320px 0; }
+.itemIcon.medium.christmasAdvisor:before { background-position: -4380px 0; }
+.itemIcon.medium.christmasCity:before { background-position: -4440px 0; }
+.itemIcon.medium.easterAdvisor:before { background-position: -4500px 0; }
+.itemIcon.medium.easterCity:before { background-position: -4560px 0; }
+.itemIcon.medium.troopsPackage.s319:before { background-position: -4680px 0; }
+.itemIcon.medium.softMerge:before { background-position: -4740px 0; }
+.itemIcon.medium.accountTransfer.city0:before { background-position: -4800px 0; }
+.itemIcon.medium.accountTransfer.city1:before { background-position: -4860px 0; }
+.itemIcon.medium.accountTransfer.city2:before { background-position: -4920px 0; }
+.itemIcon.medium.accountTransfer.city3:before { background-position: -4980px 0; }
+.itemIcon.medium.accountTransfer.city4:before { background-position: -5040px 0; }
+.itemIcon.medium.accountTransfer.city5:before { background-position: -5100px 0; }
+.itemIcon.medium.accountTransfer.city6:before { background-position: -5160px 0; }
+.itemIcon.medium.accountTransfer.city7:before { background-position: -5220px 0; }
+.itemIcon.medium.accountTransfer.city8:before { background-position: -5280px 0; }
+.itemIcon.medium.accountTransfer.city9:before { background-position: -5340px 0; }
+.itemIcon.medium.accountTransfer.city10:before { background-position: -5400px 0; }
+.itemIcon.medium.accountTransfer.city11:before { background-position: -5460px 0; }
+.itemIcon.medium.accountTransfer.city12:before { background-position: -5520px 0; }
+.itemIcon.medium.accountTransfer.city13:before { background-position: -5580px 0; }
+.itemIcon.medium.accountTransfer.city14:before { background-position: -5640px 0; }
+.itemIcon.medium.accountTransfer.city15:before { background-position: -5700px 0; }
+.itemIcon.medium.accountTransfer.city16:before { background-position: -5760px 0; }
+.itemIcon.medium.accountTransfer.city17:before { background-position: -5820px 0; }
+.itemIcon.medium.accountTransfer.city18:before { background-position: -5880px 0; }
+.itemIcon.medium.accountTransfer.city19:before { background-position: -5940px 0; }
+.itemIcon.medium.accountTransfer.city20:before { background-position: -6000px 0; }
+.itemIcon.medium.accountTransfer.city21:before { background-position: -6060px 0; }
+.itemIcon.medium.dailyRewardBoostPlutus:before     { background-position: -6300px 0; }
+.itemIcon.medium.dailyRewardBoostTyche:before      { background-position: -6360px 0; }
+.itemIcon.medium.dailyRewardBoostDionysus:before   { background-position: -6420px 0; }
+.itemIcon.medium.dailyRewardBoostPan:before        { background-position: -6480px 0; }
+.itemIcon.medium.dailyRewardBoostTheia:before      { background-position: -6540px 0; }
+.itemIcon.medium.dailyRewardBoostHephaestos:before { background-position: -6600px 0; }
+.itemIcon.medium.bronzeFleece:before { background-position: -6120px 0; }
+.itemIcon.medium.silverFleece:before { background-position: -6180px 0; }
+.itemIcon.medium.goldenFleece:before { background-position: -6240px 0; }
+.itemIcon.medium.abyssalAmbush.recruitmentSpeedUp:before { background-position: 0 0; }
+.itemIcon.medium.abyssalAmbush.increaseGodFavour:before { background-position: -60px 0; }
+.itemIcon.medium.abyssalAmbush.increaseResearchPoints:before { background-position: -120px 0; }
+.itemIcon.medium.abyssalAmbush.reduceExperimentCost:before { background-position: -180px 0; }
+.itemIcon.medium.actionPointsLimitIncrease.actionPoints2:before { background-position: -240px 0; }
+.itemIcon.medium.actionPointsLimitIncrease.actionPoints4:before { background-position: -300px 0; }
+.itemIcon.medium.convertBoosterBuilding:before { background-position: -360px 0; }
+
+
+.itemIcon.large.premiumAccount:before { background-position: 0 0; }
+.itemIcon.large.accountTransferCoin:before { background-position: -98px 0; }
+.itemIcon.large.resourceBonus:before { background-position: -196px 0; }
+.itemIcon.large.wineBonus:before { background-position: -294px 0; }
+.itemIcon.large.marbleBonus:before { background-position: -392px 0; }
+.itemIcon.large.sulfurBonus:before { background-position: -490px 0; }
+.itemIcon.large.crystalBonus:before { background-position: -588px 0; }
+.itemIcon.large.safeCapacityBonus:before { background-position: -686px 0; }
+.itemIcon.large.storageCapacityBonus:before { background-position: -784px 0; }
+.itemIcon.large.researchPointsBonus:before { background-position: -882px 0; }
+.itemIcon.large.tradeRouteCoin:before { background-position: -980px 0; }
+.itemIcon.large.premiumDummyPackageSmall:before { background-position: -1078px 0; }
+.itemIcon.large.premiumDummyPackageMedium:before { background-position: -1176px 0; }
+.itemIcon.large.premiumDummyPackageBig:before { background-position: -1274px 0; }
+.itemIcon.large.winePackage:before { background-position: -1372px 0; }
+.itemIcon.large.marblePackage:before { background-position: -1470px 0; }
+.itemIcon.large.crystalPackage:before { background-position: -1568px 0; }
+.itemIcon.large.sulfurPackage:before { background-position: -1666px 0; }
+.itemIcon.large.resourcePackage:before { background-position: -1764px 0; }
+.itemIcon.large.putPlague:before { background-position: -1862px 0; }
+.itemIcon.large.plagueProtection:before { background-position: -1960px 0; }
+.itemIcon.large.wineBonus.days:before { background-position: -2058px 0; }
+.itemIcon.large.safeCapacityBonus.days:before { background-position: -2156px 0; }
+.itemIcon.large.premiumTraderCoin:before { background-position: -2254px 0; }
+.itemIcon.large.heliosTowerOil:before { background-position: -2450px 0; }
+.itemIcon.large.badTaxAccountant:before { background-position: -2548px 0; }
+.itemIcon.large.culturalTreatyCoin:before { background-position: -2646px 0; }
+.itemIcon.large.heliosTowerCoin:before { background-position: -2744px 0; }
+.itemIcon.large.tritonEnginesCoin:before { background-position: -2842px 0; }
+.itemIcon.large.archiveMessageCoin:before { background-position: -2940px 0; }
+.itemIcon.large.archiveEspionageReportCoin:before { background-position: -3038px 0; }
+.itemIcon.large.moveCityCoin:before { background-position: -3136px 0; }
+.itemIcon.large.moveIslandSpotCoin:before { background-position: -3234px 0; }
+.itemIcon.large.colonizeIslandSpotCoin:before { background-position: -3332px 0; }
+.itemIcon.large.barbarianMapPiece:before { background-position: -3430px 0; }
+.itemIcon.large.goldPackage:before { background-position: -3528px 0; }
+.itemIcon.large.tradegoodBonus:before { background-position: -3626px 0; }
+.itemIcon.large.troopInfoCoin:before { background-position: -3724px 0; }
+.itemIcon.large.convertCapturePointsCoin:before { background-position: -3822px 0; }
+.itemIcon.large.troopsPackage.s309:before { background-position: -3920px 0; }
+.itemIcon.large.troopsPackage.s313:before { background-position: -4018px 0; }
+.itemIcon.large.troopsPackage.s308:before { background-position: -4116px 0; }
+.itemIcon.large.troopsPackage.s311:before { background-position: -4214px 0; }
+.itemIcon.large.troopsPackage.s312:before { background-position: -4312px 0; }
+.itemIcon.large.troopsPackage.s303:before { background-position: -4410px 0; }
+.itemIcon.large.troopsPackage.s306:before { background-position: -4508px 0; }
+.itemIcon.large.troopsPackage.s310:before { background-position: -4606px 0; }
+.itemIcon.large.troopsPackage.s305:before { background-position: -4704px 0; }
+.itemIcon.large.troopsPackage.s307:before { background-position: -4802px 0; }
+.itemIcon.large.troopsPackage.s304:before { background-position: -4900px 0; }
+.itemIcon.large.troopsPackage.s302:before { background-position: -4998px 0; }
+.itemIcon.large.troopsPackage.s315:before { background-position: -5096px 0; }
+.itemIcon.large.troopsPackage.s301:before { background-position: -5194px 0; }
+.itemIcon.large.troopsPackage.s213:before { background-position: -5292px 0; }
+.itemIcon.large.troopsPackage.s219:before { background-position: -5390px 0; }
+.itemIcon.large.troopsPackage.s216:before { background-position: -5488px 0; }
+.itemIcon.large.troopsPackage.s211:before { background-position: -5586px 0; }
+.itemIcon.large.troopsPackage.s214:before { background-position: -5684px 0; }
+.itemIcon.large.troopsPackage.s215:before { background-position: -5782px 0; }
+.itemIcon.large.troopsPackage.s217:before { background-position: -5880px 0; }
+.itemIcon.large.troopsPackage.s210:before { background-position: -5978px 0; }
+.itemIcon.large.troopsPackage.s218:before { background-position: -6076px 0; }
+.itemIcon.large.troopsPackage.s212:before { background-position: -6174px 0; }
+.itemIcon.large.troopsPackage.s220:before { background-position: -6272px 0; }
+.itemIcon.large.citizensPackage:before { background-position: -6370px 0; }
+.itemIcon.large.femaleAdvisor:before { background-position: -6468px 0; }
+.itemIcon.large.halloweenAdvisor:before { background-position: -6566px 0; }
+.itemIcon.large.halloweenCity:before { background-position: -6664px 0; }
+.itemIcon.large.barbarianTruce:before { background-position: -6762px 0; }
+.itemIcon.large.barbarianAdvisor:before { background-position: -6860px 0; }
+.itemIcon.large.winterAdvisor:before { background-position: -6958px 0; }
+.itemIcon.large.winterCity:before { background-position: -7056px 0; }
+.itemIcon.large.christmasAdvisor:before { background-position: -7154px 0; }
+.itemIcon.large.christmasCity:before { background-position: -7252px 0; }
+.itemIcon.large.easterAdvisor:before { background-position: -7350px 0; }
+.itemIcon.large.easterCity:before { background-position: -7448px 0; }
+.itemIcon.large.troopsPackage.s319:before { background-position: -7644px 0; }
+.itemIcon.large.softMerge:before { background-position: -7742px 0; }
+.itemIcon.large.accountTransfer.city0:before { background-position: -7840px 0; }
+.itemIcon.large.accountTransfer.city1:before { background-position: -7938px 0; }
+.itemIcon.large.accountTransfer.city2:before { background-position: -8036px 0; }
+.itemIcon.large.accountTransfer.city3:before { background-position: -8134px 0; }
+.itemIcon.large.accountTransfer.city4:before { background-position: -8232px 0; }
+.itemIcon.large.accountTransfer.city5:before { background-position: -8330px 0; }
+.itemIcon.large.accountTransfer.city6:before { background-position: -8428px 0; }
+.itemIcon.large.accountTransfer.city7:before { background-position: -8526px 0; }
+.itemIcon.large.accountTransfer.city8:before { background-position: -8624px 0; }
+.itemIcon.large.accountTransfer.city9:before { background-position: -8722px 0; }
+.itemIcon.large.accountTransfer.city10:before { background-position: -8820px 0; }
+.itemIcon.large.accountTransfer.city11:before { background-position: -8918px 0; }
+.itemIcon.large.accountTransfer.city12:before { background-position: -9016px 0; }
+.itemIcon.large.accountTransfer.city13:before { background-position: -9114px 0; }
+.itemIcon.large.accountTransfer.city14:before { background-position: -9212px 0; }
+.itemIcon.large.accountTransfer.city15:before { background-position: -9310px 0; }
+.itemIcon.large.accountTransfer.city16:before { background-position: -9408px 0; }
+.itemIcon.large.accountTransfer.city17:before { background-position: -9506px 0; }
+.itemIcon.large.accountTransfer.city18:before { background-position: -9604px 0; }
+.itemIcon.large.accountTransfer.city19:before { background-position: -9702px 0; }
+.itemIcon.large.accountTransfer.city20:before { background-position: -9800px 0; }
+.itemIcon.large.accountTransfer.city21:before { background-position: -9898px 0; }
+.itemIcon.large.dailyRewardBoostPlutus:before     { background-position: -10290px 0; }
+.itemIcon.large.dailyRewardBoostTyche:before      { background-position: -10388px 0; }
+.itemIcon.large.dailyRewardBoostDionysus:before   { background-position: -10486px 0; }
+.itemIcon.large.dailyRewardBoostPan:before        { background-position: -10584px 0; }
+.itemIcon.large.dailyRewardBoostTheia:before      { background-position: -10682px 0; }
+.itemIcon.large.dailyRewardBoostHephaestos:before { background-position: -10780px 0; }
+.itemIcon.large.bronzeFleece:before { background-position:  -9996px 0; }
+.itemIcon.large.silverFleece:before { background-position: -10094px 0; }
+.itemIcon.large.goldenFleece:before { background-position: -10192px 0; }
+.itemIcon.large.abyssalAmbush.recruitmentSpeedUp:before { background-position: 0 0; }
+.itemIcon.large.abyssalAmbush.increaseGodFavour:before { background-position: -98px 0; }
+.itemIcon.large.abyssalAmbush.increaseResearchPoints:before { background-position: -196px 0; }
+.itemIcon.large.abyssalAmbush.reduceExperimentCost:before { background-position: -294px 0; }
+.itemIcon.large.actionPointsLimitIncrease.actionPoints2:before { background-position: -392px 0; }
+.itemIcon.large.actionPointsLimitIncrease.actionPoints4:before { background-position: -490px 0; }
+.itemIcon.large.convertBoosterBuilding:before { background-position: -588px 0; }
+
+.itemIcon.xl.premiumAccount:before { background-position: 0 0; }
+.itemIcon.xl.accountTransferCoin:before { background-position: -150px 0; }
+.itemIcon.xl.resourceBonus:before { background-position: -300px 0; }
+.itemIcon.xl.wineBonus:before { background-position: -450px 0; }
+.itemIcon.xl.marbleBonus:before { background-position: -600px 0; }
+.itemIcon.xl.sulfurBonus:before { background-position: -750px 0; }
+.itemIcon.xl.crystalBonus:before { background-position: -900px 0; }
+.itemIcon.xl.safeCapacityBonus:before { background-position: -1050px 0; }
+.itemIcon.xl.storageCapacityBonus:before { background-position: -1200px 0; }
+.itemIcon.xl.researchPointsBonus:before { background-position: -1350px 0; }
+.itemIcon.xl.tradeRouteCoin:before { background-position: -1500px 0; }
+.itemIcon.xl.premiumDummyPackageSmall:before { background-position: -1650px 0; }
+.itemIcon.xl.premiumDummyPackageMedium:before { background-position: -1800px 0; }
+.itemIcon.xl.premiumDummyPackageBig:before { background-position: -1950px 0; }
+.itemIcon.xl.winePackage:before { background-position: -2100px 0; }
+.itemIcon.xl.marblePackage:before { background-position: -2250px 0; }
+.itemIcon.xl.crystalPackage:before { background-position: -2400px 0; }
+.itemIcon.xl.sulfurPackage:before { background-position: -2550px 0; }
+.itemIcon.xl.resourcePackage:before { background-position: -2700px 0; }
+.itemIcon.xl.putPlague:before { background-position: -2850px 0; }
+.itemIcon.xl.plagueProtection:before { background-position: -3000px 0; }
+.itemIcon.xl.wineBonus.days:before { background-position: -3150px 0; }
+.itemIcon.xl.safeCapacityBonus.days:before { background-position: -3300px 0; }
+.itemIcon.xl.premiumTraderCoin:before { background-position: -3450px 0; }
+.itemIcon.xl.heliosTowerOil:before { background-position: -3750px 0; }
+.itemIcon.xl.badTaxAccountant:before { background-position: -3900px 0; }
+.itemIcon.xl.culturalTreatyCoin:before { background-position: -4050px 0; }
+.itemIcon.xl.heliosTowerCoin:before { background-position: -4200px 0; }
+.itemIcon.xl.tritonEnginesCoin:before { background-position: -4350px 0; }
+.itemIcon.xl.archiveMessageCoin:before { background-position: -4500px 0; }
+.itemIcon.xl.archiveEspionageReportCoin:before { background-position: -4650px 0; }
+.itemIcon.xl.moveCityCoin:before { background-position: -4800px 0; }
+.itemIcon.xl.moveIslandSpotCoin:before { background-position: -4950px 0; }
+.itemIcon.xl.colonizeIslandSpotCoin:before { background-position: -5100px 0; }
+.itemIcon.xl.barbarianMapPiece:before { background-position: -5250px 0; }
+.itemIcon.xl.goldPackage:before { background-position: -5400px 0; }
+.itemIcon.xl.tradegoodBonus:before { background-position: -5550px 0; }
+.itemIcon.xl.troopInfoCoin:before { background-position: -5700px 0; }
+.itemIcon.xl.convertCapturePointsCoin:before { background-position: -5850px 0; }
+.itemIcon.xl.troopsPackage.s309:before { background-position: -6000px 0; }
+.itemIcon.xl.troopsPackage.s313:before { background-position: -6150px 0; }
+.itemIcon.xl.troopsPackage.s308:before { background-position: -6300px 0; }
+.itemIcon.xl.troopsPackage.s311:before { background-position: -6450px 0; }
+.itemIcon.xl.troopsPackage.s312:before { background-position: -6600px 0; }
+.itemIcon.xl.troopsPackage.s303:before { background-position: -6750px 0; }
+.itemIcon.xl.troopsPackage.s306:before { background-position: -6900px 0; }
+.itemIcon.xl.troopsPackage.s310:before { background-position: -7050px 0; }
+.itemIcon.xl.troopsPackage.s305:before { background-position: -7200px 0; }
+.itemIcon.xl.troopsPackage.s307:before { background-position: -7350px 0; }
+.itemIcon.xl.troopsPackage.s304:before { background-position: -7500px 0; }
+.itemIcon.xl.troopsPackage.s302:before { background-position: -7650px 0; }
+.itemIcon.xl.troopsPackage.s315:before { background-position: -7800px 0; }
+.itemIcon.xl.troopsPackage.s301:before { background-position: -7950px 0; }
+.itemIcon.xl.troopsPackage.s213:before { background-position: -8100px 0; }
+.itemIcon.xl.troopsPackage.s219:before { background-position: -8250px 0; }
+.itemIcon.xl.troopsPackage.s216:before { background-position: -8400px 0; }
+.itemIcon.xl.troopsPackage.s211:before { background-position: -8550px 0; }
+.itemIcon.xl.troopsPackage.s214:before { background-position: -8700px 0; }
+.itemIcon.xl.troopsPackage.s215:before { background-position: -8850px 0; }
+.itemIcon.xl.troopsPackage.s217:before { background-position: -9000px 0; }
+.itemIcon.xl.troopsPackage.s210:before { background-position: -9150px 0; }
+.itemIcon.xl.troopsPackage.s218:before { background-position: -9300px 0; }
+.itemIcon.xl.troopsPackage.s212:before { background-position: -9450px 0; }
+.itemIcon.xl.troopsPackage.s220:before { background-position: -9600px 0; }
+.itemIcon.xl.citizensPackage:before { background-position: -9750px 0; }
+.itemIcon.xl.femaleAdvisor:before { background-position: -9900px 0; }
+.itemIcon.xl.halloweenAdvisor:before { background-position: -10050px 0; }
+.itemIcon.xl.halloweenCity:before { background-position: -10200px 0; }
+.itemIcon.xl.barbarianTruce:before { background-position: -10350px 0; }
+.itemIcon.xl.barbarianAdvisor:before { background-position: -10500px 0; }
+.itemIcon.xl.winterAdvisor:before { background-position: -10650px 0; }
+.itemIcon.xl.winterCity:before { background-position: -10800px 0; }
+.itemIcon.xl.christmasAdvisor:before { background-position: -10950px 0; }
+.itemIcon.xl.christmasCity:before { background-position: -11100px 0; }
+.itemIcon.xl.easterAdvisor:before { background-position: -11250px 0; }
+.itemIcon.xl.easterCity:before { background-position: -11400px 0; }
+.itemIcon.xl.troopsPackage.s319:before { background-position: -11700px 0; }
+.itemIcon.xl.softMerge:before { background-position: -11850px 0; }
+.itemIcon.xl.accountTransfer.city0:before { background-position: -12000px 0; }
+.itemIcon.xl.accountTransfer.city1:before { background-position: -12150px 0; }
+.itemIcon.xl.accountTransfer.city2:before { background-position: -12300px 0; }
+.itemIcon.xl.accountTransfer.city3:before { background-position: -12450px 0; }
+.itemIcon.xl.accountTransfer.city4:before { background-position: -12600px 0; }
+.itemIcon.xl.accountTransfer.city5:before { background-position: -12750px 0; }
+.itemIcon.xl.accountTransfer.city6:before { background-position: -12900px 0; }
+.itemIcon.xl.accountTransfer.city7:before { background-position: -13050px 0; }
+.itemIcon.xl.accountTransfer.city8:before { background-position: -13200px 0; }
+.itemIcon.xl.accountTransfer.city9:before { background-position: -13350px 0; }
+.itemIcon.xl.accountTransfer.city10:before { background-position: -13500px 0; }
+.itemIcon.xl.accountTransfer.city11:before { background-position: -13650px 0; }
+.itemIcon.xl.accountTransfer.city12:before { background-position: -13800px 0; }
+.itemIcon.xl.accountTransfer.city13:before { background-position: -13950px 0; }
+.itemIcon.xl.accountTransfer.city14:before { background-position: -14100px 0; }
+.itemIcon.xl.accountTransfer.city15:before { background-position: -14250px 0; }
+.itemIcon.xl.accountTransfer.city16:before { background-position: -14400px 0; }
+.itemIcon.xl.accountTransfer.city17:before { background-position: -14550px 0; }
+.itemIcon.xl.accountTransfer.city18:before { background-position: -14700px 0; }
+.itemIcon.xl.accountTransfer.city19:before { background-position: -14850px 0; }
+.itemIcon.xl.accountTransfer.city20:before { background-position: -15000px 0; }
+.itemIcon.xl.accountTransfer.city21:before { background-position: -15150px 0; }
+.itemIcon.xl.dailyRewardBoostPlutus:before     { background-position: -15750px 0; }
+.itemIcon.xl.dailyRewardBoostTyche:before      { background-position: -15900px 0; }
+.itemIcon.xl.dailyRewardBoostDionysus:before   { background-position: -16050px 0; }
+.itemIcon.xl.dailyRewardBoostPan:before        { background-position: -16200px 0; }
+.itemIcon.xl.dailyRewardBoostTheia:before      { background-position: -16350px 0; }
+.itemIcon.xl.dailyRewardBoostHephaestos:before { background-position: -16500px 0; }
+.itemIcon.xl.bronzeFleece:before { background-position: -15300px 0; }
+.itemIcon.xl.silverFleece:before { background-position: -15450px 0; }
+.itemIcon.xl.goldenFleece:before { background-position: -15600px 0; }
+.itemIcon.xl.abyssalAmbush.recruitmentSpeedUp:before { background-position: 0 0; }
+.itemIcon.xl.abyssalAmbush.increaseGodFavour:before { background-position: -150px 0; }
+.itemIcon.xl.abyssalAmbush.increaseResearchPoints:before { background-position: -300px 0; }
+.itemIcon.xl.abyssalAmbush.reduceExperimentCost:before { background-position: -450px 0; }
+.itemIcon.xl.actionPointsLimitIncrease.actionPoints2:before { background-position: -600px 0; }
+.itemIcon.xl.actionPointsLimitIncrease.actionPoints4:before { background-position: -750px 0; }
+.itemIcon.xl.convertBoosterBuilding:before { background-position: -900px 0; }
+
+
+.itemIcon.small.consumable { background-position: 0 0; }
+.itemIcon.small.twoDays, .itemIcon.small.threeDays, .itemIcon.small.abyssalAmbush.amount1,.itemIcon.small.abyssalAmbush.amount3, .itemIcon.small.abyssalAmbush.amount2 { background-position: -34px 0; }
+.itemIcon.small.sevenDays, .itemIcon.small.tenDays, .itemIcon.small.fourteenDays, .itemIcon.small.abyssalAmbush.amount6 { background-position: -68px 0; }
+.itemIcon.small.thirtyDays, .itemIcon.small.abyssalAmbush.amount12 { background-position: -102px 0; }
+.itemIcon.small.coin { background-position: -136px 0; }
+.itemIcon.small.sixtyDays, .itemIcon.small.abyssalAmbush.amount24 { background-position: -170px 0; }
+
+.itemIcon.medium.consumable { background-position: 0 0; }
+.itemIcon.medium.twoDays, .itemIcon.medium.threeDays, .itemIcon.medium.abyssalAmbush.amount1,.itemIcon.medium.abyssalAmbush.amount3, .itemIcon.medium.abyssalAmbush.amount2  { background-position: -60px 0; }
+.itemIcon.medium.sevenDays, .itemIcon.medium.tenDays, .itemIcon.medium.fourteenDays, .itemIcon.medium.abyssalAmbush.amount6 { background-position: -120px 0; }
+.itemIcon.medium.thirtyDays, .itemIcon.medium.abyssalAmbush.amount12 { background-position: -180px 0; }
+.itemIcon.medium.coin { background-position: -240px 0; }
+.itemIcon.medium.sixtyDays, .itemIcon.medium.abyssalAmbush.amount24 { background-position: -300px 0; }
+
+.itemIcon.medium.twoDays:after { background-position: 0 0; }
+.itemIcon.medium.sevenDays:after { background-position: -60px 0; }
+.itemIcon.medium.thirtyDays:after { background-position: -120px 0; }
+.itemIcon.medium.tenDays:after { background-position: -180px 0; }
+.itemIcon.medium.sixtyDays:after { background-position: -240px 0; }
+.itemIcon.medium.threeDays:after { background-position: -300px 0; }
+.itemIcon.medium.fourteenDays:after { background-position: -360px 0; }
+.itemIcon.medium.twelveHours:after { background-position: 0 -420px }
+.itemIcon.medium.twentyFourHours:after { background-position: -60px -420px }
+.itemIcon.medium.abyssalAmbush.amount1:after { background-position: 0 -360px; }
+.itemIcon.medium.abyssalAmbush.amount2:after { background-position: -60px -360px; }
+.itemIcon.medium.abyssalAmbush.amount3:after { background-position: -120px -360px; }
+.itemIcon.medium.abyssalAmbush.amount6:after { background-position: -180px -360px; }
+.itemIcon.medium.abyssalAmbush.amount12:after { background-position: -240px -360px; }
+.itemIcon.medium.abyssalAmbush.amount24:after { background-position: -300px -360px; }
+
+.itemIcon.medium.goodsPackage.amount1000:after { background-position: 0 -60px; }
+.itemIcon.medium.goodsPackage.amount10000:after { background-position: -60px -60px; }
+.itemIcon.medium.goodsPackage.amount25000:after { background-position: -120px -60px; }
+.itemIcon.medium.goodsPackage.amount100000:after { background-position: -180px -60px; }
+.itemIcon.medium.goodsPackage.amount250000:after { background-position: -240px -60px; }
+.itemIcon.medium.goodsPackage.amount500000:after { background-position: -300px -60px; }
+.itemIcon.medium.goodsPackage.amount1000000:after { background-position: -360px -60px; }
+.itemIcon.medium.goodsPackage.amount5000000:after { background-position: -420px -60px; }
+.itemIcon.medium.goodsPackage.amount10000000:after { background-position: -480px -60px; }
+.itemIcon.medium.troopsPackage.units.amount10:after { background-position: 0 -120px; }
+.itemIcon.medium.troopsPackage.units.amount50:after { background-position: -60px -120px; }
+.itemIcon.medium.troopsPackage.units.amount100:after { background-position: -120px -120px; }
+.itemIcon.medium.troopsPackage.units.amount250:after { background-position: -180px -120px; }
+.itemIcon.medium.troopsPackage.units.amount500:after { background-position: -240px -120px; }
+.itemIcon.medium.troopsPackage.units.amount1000:after { background-position: -300px -120px; }
+.itemIcon.medium.troopsPackage.units.amount1500:after { background-position: -360px -120px; }
+.itemIcon.medium.troopsPackage.units.amount300:after { background-position: -420px -120px; }
+.itemIcon.medium.troopsPackage.ships.amount5:after { background-position: 0 -180px; }
+.itemIcon.medium.troopsPackage.ships.amount25:after { background-position: -60px -180px; }
+.itemIcon.medium.troopsPackage.ships.amount50:after { background-position: -120px -180px; }
+.itemIcon.medium.troopsPackage.ships.amount125:after { background-position: -180px -180px; }
+.itemIcon.medium.troopsPackage.ships.amount250:after { background-position: -240px -180px; }
+.itemIcon.medium.troopsPackage.ships.amount500:after { background-position: -300px -180px; }
+.itemIcon.medium.troopsPackage.ships.amount1000:after { background-position: -360px -180px; }
+.itemIcon.medium.citizensPackage.amount5:after { background-position: 0 -240px; }
+.itemIcon.medium.citizensPackage.amount10:after { background-position: -60px -240px; }
+.itemIcon.medium.citizensPackage.amount20:after { background-position: -120px -240px; }
+.itemIcon.medium.barbarianTruce.n1:after { background-position: 0 -300px; }
+.itemIcon.medium.barbarianTruce.n2:after { background-position: -60px -300px; }
+.itemIcon.medium.barbarianTruce.n3:after { background-position: -120px -300px; }
+.itemIcon.medium.barbarianTruce.n4:after { background-position: -180px -300px; }
+.itemIcon.medium.barbarianTruce.n5:after { background-position: -240px -300px; }
+
+
+.itemIcon.large.consumable { background-position: 0 0; }
+.itemIcon.large.twoDays, .itemIcon.large.threeDays, .itemIcon.large.abyssalAmbush.amount1,.itemIcon.large.abyssalAmbush.amount3, .itemIcon.large.abyssalAmbush.amount2 { background-position: -98px 0; }
+.itemIcon.large.sevenDays, .itemIcon.large.tenDays, .itemIcon.large.fourteenDays, .itemIcon.large.abyssalAmbush.amount6  { background-position: -196px 0; }
+.itemIcon.large.thirtyDays, .itemIcon.large.abyssalAmbush.amount12 { background-position: -294px 0; }
+.itemIcon.large.sixtyDays, .itemIcon.large.abyssalAmbush.amount24 { background-position: -490px 0; }
+.itemIcon.large.coin { background-position: -392px 0; }
+
+.itemIcon.large.twoDays:after { background-position: 0 0; }
+.itemIcon.large.sevenDays:after { background-position: -98px 0; }
+.itemIcon.large.thirtyDays:after { background-position: -196px 0; }
+.itemIcon.large.tenDays:after { background-position: -294px 0; }
+.itemIcon.large.sixtyDays:after { background-position: -392px 0; }
+.itemIcon.large.threeDays:after { background-position: -490px 0; }
+.itemIcon.large.fourteenDays:after { background-position: -588px 0; }
+.itemIcon.large.fourteenDays:after { background-position: -360px 0; }
+.itemIcon.large.twelveHours:after { background-position: 0 -686px }
+.itemIcon.large.twentyFourHours:after { background-position: -98px -686px }
+.itemIcon.large.abyssalAmbush.amount1:after { background-position: 0 -588px; }
+.itemIcon.large.abyssalAmbush.amount2:after { background-position: -88px -588px; }
+.itemIcon.large.abyssalAmbush.amount3:after { background-position: -196px -588px; }
+.itemIcon.large.abyssalAmbush.amount6:after { background-position: -294px -588px; }
+.itemIcon.large.abyssalAmbush.amount12:after { background-position: -392px -588px; }
+.itemIcon.large.abyssalAmbush.amount24:after { background-position: -490px -588px; }
+
+.itemIcon.large.goodsPackage.amount1000:after { background-position: 0 -98px; }
+.itemIcon.large.goodsPackage.amount10000:after { background-position: -98px -98px; }
+.itemIcon.large.goodsPackage.amount25000:after { background-position: -196px -98px; }
+.itemIcon.large.goodsPackage.amount100000:after { background-position: -294px -98px; }
+.itemIcon.large.goodsPackage.amount250000:after { background-position: -392px -98px; }
+.itemIcon.large.troopsPackage.units.amount10:after { background-position: 0 -196px; }
+.itemIcon.large.troopsPackage.units.amount50:after { background-position: -98px -196px; }
+.itemIcon.large.troopsPackage.units.amount100:after { background-position: -196px -196px; }
+.itemIcon.large.troopsPackage.units.amount250:after { background-position: -294px -196px; }
+.itemIcon.large.troopsPackage.units.amount500:after { background-position: -392px -196px; }
+.itemIcon.large.troopsPackage.units.amount1000:after { background-position: -490px -196px; }
+.itemIcon.large.troopsPackage.units.amount1500:after { background-position: -588px -196px; }
+.itemIcon.large.troopsPackage.units.amount300:after { background-position: -686px -196px; }
+.itemIcon.large.troopsPackage.ships.amount5:after { background-position: 0 -294px; }
+.itemIcon.large.troopsPackage.ships.amount25:after { background-position: -98px -294px; }
+.itemIcon.large.troopsPackage.ships.amount50:after { background-position: -196px -294px; }
+.itemIcon.large.troopsPackage.ships.amount125:after { background-position: -294px -294px; }
+.itemIcon.large.troopsPackage.ships.amount250:after { background-position: -392px -294px; }
+.itemIcon.large.troopsPackage.ships.amount500:after { background-position: -490px -294px; }
+.itemIcon.large.troopsPackage.ships.amount1000:after { background-position: -588px -294px; }
+.itemIcon.large.citizensPackage.amount5:after { background-position: 0 -392px; }
+.itemIcon.large.citizensPackage.amount10:after { background-position: -98px -392px; }
+.itemIcon.large.citizensPackage.amount20:after { background-position: -196px -392px; }
+.itemIcon.large.barbarianTruce.n1:after { background-position: 0 -490px; }
+.itemIcon.large.barbarianTruce.n2:after { background-position: -98px -490px; }
+.itemIcon.large.barbarianTruce.n3:after { background-position: -196px -490px; }
+.itemIcon.large.barbarianTruce.n4:after { background-position: -294px -490px; }
+.itemIcon.large.barbarianTruce.n5:after { background-position: -392px -490px; }
+
+
+.itemIcon.xl.consumable { background-position: 0 0; }
+.itemIcon.xl.twoDays, .itemIcon.xl.threeDays, .itemIcon.xl.abyssalAmbush.amount1,.itemIcon.xl.abyssalAmbush.amount3, .itemIcon.xl.abyssalAmbush.amount2 { background-position: -150px 0; }
+.itemIcon.xl.sevenDays, .itemIcon.xl.tenDays, .itemIcon.xl.fourteenDays, .itemIcon.xl.abyssalAmbush.amount6 { background-position: -300px 0; }
+.itemIcon.xl.thirtyDays, .itemIcon.xl.abyssalAmbush.amount12 { background-position: -450px 0; }
+.itemIcon.xl.coin { background-position: -600px 0; }
+.itemIcon.xl.sixtyDays, .itemIcon.xl.abyssalAmbush.amount24 { background-position: -750px 0; }
+
+.itemIcon.xl.twoDays:after { background-position: 0 0; }
+.itemIcon.xl.sevenDays:after { background-position: -150px 0; }
+.itemIcon.xl.thirtyDays:after { background-position: -300px 0; }
+.itemIcon.xl.tenDays:after { background-position: -450px 0; }
+.itemIcon.xl.sixtyDays:after { background-position: -600px 0; }
+.itemIcon.xl.threeDays:after { background-position: -750px 0; }
+.itemIcon.xl.fourteenDays:after { background-position: -900px 0; }
+.itemIcon.xl.twelveHours:after { background-position: 0 -1050px }
+.itemIcon.xl.twentyFourHours:after { background-position: -150px -1050px }
+.itemIcon.xl.abyssalAmbush.amount1:after { background-position: 0 -900px; }
+.itemIcon.xl.abyssalAmbush.amount2:after { background-position: -150px -900px; }
+.itemIcon.xl.abyssalAmbush.amount3:after { background-position: -300px -900px; }
+.itemIcon.xl.abyssalAmbush.amount6:after { background-position: -450px -900px; }
+.itemIcon.xl.abyssalAmbush.amount12:after { background-position: -600px -900px; }
+.itemIcon.xl.abyssalAmbush.amount24:after { background-position: -750px -900px; }
+
+.itemIcon.xl.goodsPackage.amount1000:after { background-position: 0 -150px; }
+.itemIcon.xl.goodsPackage.amount10000:after { background-position: -150px -150px; }
+.itemIcon.xl.goodsPackage.amount25000:after { background-position: -300px -150px; }
+.itemIcon.xl.goodsPackage.amount100000:after { background-position: -450px -150px; }
+.itemIcon.xl.goodsPackage.amount250000:after { background-position: -600px -150px; }
+.itemIcon.xl.goodsPackage.amount500000:after { background-position: -750px -150px; }
+.itemIcon.xl.goodsPackage.amount1000000:after { background-position: -900px -150px; }
+.itemIcon.xl.goodsPackage.amount5000000:after { background-position: -1050px -150px; }
+.itemIcon.xl.goodsPackage.amount10000000:after { background-position: -1200px -150px; }
+.itemIcon.xl.troopsPackage.units.amount10:after { background-position: 0 -300px; }
+.itemIcon.xl.troopsPackage.units.amount50:after { background-position: -150px -300px; }
+.itemIcon.xl.troopsPackage.units.amount100:after { background-position: -300px -300px; }
+.itemIcon.xl.troopsPackage.units.amount250:after { background-position: -450px -300px; }
+.itemIcon.xl.troopsPackage.units.amount500:after { background-position: -600px -300px; }
+.itemIcon.xl.troopsPackage.units.amount1000:after { background-position: -750px -300px; }
+.itemIcon.xl.troopsPackage.units.amount1500:after { background-position: -900px -300px; }
+.itemIcon.xl.troopsPackage.units.amount300:after { background-position: -1050px -300px; }
+.itemIcon.xl.troopsPackage.ships.amount5:after { background-position: 0 -450px; }
+.itemIcon.xl.troopsPackage.ships.amount25:after { background-position: -150px -450px; }
+.itemIcon.xl.troopsPackage.ships.amount50:after { background-position: -300px -450px; }
+.itemIcon.xl.troopsPackage.ships.amount125:after { background-position: -450px -450px; }
+.itemIcon.xl.troopsPackage.ships.amount250:after { background-position: -600px -450px; }
+.itemIcon.xl.troopsPackage.ships.amount500:after { background-position: -750px -450px; }
+.itemIcon.xl.troopsPackage.ships.amount1000:after { background-position: -900px -450px; }
+.itemIcon.xl.citizensPackage.amount5:after { background-position: 0 -600px; }
+.itemIcon.xl.citizensPackage.amount10:after { background-position: -150px -600px; }
+.itemIcon.xl.citizensPackage.amount20:after { background-position: -300px -600px; }
+.itemIcon.xl.barbarianTruce.n1:after { background-position: 0 -750px; }
+.itemIcon.xl.barbarianTruce.n2:after { background-position: -150px -750px; }
+.itemIcon.xl.barbarianTruce.n3:after { background-position: -300px -750px; }
+.itemIcon.xl.barbarianTruce.n4:after { background-position: -450px -750px; }
+.itemIcon.xl.barbarianTruce.n5:after { background-position: -600px -750px; }
+
+#dailyTasksRewards .itemIcon {
+    margin: 0 auto;
+    background: none;
+}
+
+.itemIcon.noAmountIndicator:after {
+    background: none !important;
+}
+
+.itemIcon.small.troopInfo:before {
+    background-position: -1224px 0;
+}
+.phase1 #city_background_nw { background-image:url(//gf1.geo.gfsrv.net/cdnf3/b34b2a90ebf1541b1f28833dd5642e.jpg); }
+.phase1 #city_background_ne { background-image:url(//gf3.geo.gfsrv.net/cdnba/a83c042f318d637106eb71bb53ec5e.jpg); }
+.phase1 #city_background_sw { background-image:url(//gf2.geo.gfsrv.net/cdnad/b242d18913ffa01f483445a5f56727.jpg); }
+.phase1 #city_background_se { background-image:url(//gf1.geo.gfsrv.net/cdn97/e4c67ff779eedb049dbc5e646df97d.jpg); }
+
+.phase2 #city_background_nw { background-image:url(//gf3.geo.gfsrv.net/cdn5f/834d4157dbe90d8ff04f3cbab0fd7b.jpg); }
+.phase2 #city_background_ne { background-image:url(//gf3.geo.gfsrv.net/cdn29/180fea11f00e15aa0297c7db073cbd.jpg); }
+.phase2 #city_background_sw { background-image:url(//gf1.geo.gfsrv.net/cdnc0/76268085023fbfe8b754a91dcae395.jpg); }
+.phase2 #city_background_se { background-image:url(//gf3.geo.gfsrv.net/cdn53/a30360772bf16ff94fd68ee8907093.jpg); }
+
+.phase3 #city_background_nw { background-image:url(//gf2.geo.gfsrv.net/cdn11/ff5fd8e7769e255a9099a94373aebf.jpg); }
+.phase3 #city_background_ne { background-image:url(//gf1.geo.gfsrv.net/cdn68/734a0dbe4f7750097e5c207cb6954d.jpg); }
+.phase3 #city_background_sw { background-image:url(//gf2.geo.gfsrv.net/cdn44/c38b15cedcccc418fdf1b59fc296b5.jpg); }
+.phase3 #city_background_se { background-image:url(//gf3.geo.gfsrv.net/cdn2b/bde979e604a8e98bbb1d15fcaac217.jpg); }
+
+.phase4 #city_background_nw { background-image:url(//gf3.geo.gfsrv.net/cdn5a/dff8bdbf4de132dea3f72516ca43fd.jpg); }
+.phase4 #city_background_ne { background-image:url(//gf2.geo.gfsrv.net/cdn4d/c2ca1931e9085e7e18568385b6568c.jpg); }
+.phase4 #city_background_sw { background-image:url(//gf1.geo.gfsrv.net/cdn92/936a18229734246cc73fe05f6ec3f4.jpg); }
+.phase4 #city_background_se { background-image:url(//gf1.geo.gfsrv.net/cdnf9/8c47b1b1d972107154199a883703cb.jpg); }
+
+.phase5 #city_background_nw { background-image:url(//gf2.geo.gfsrv.net/cdn7a/a96585a13ef2c139cc79dc07274fd9.jpg); }
+.phase5 #city_background_ne { background-image:url(//gf3.geo.gfsrv.net/cdnbf/3abe09ab951cd626f866fe5c9bf95f.jpg); }
+.phase5 #city_background_sw { background-image:url(//gf1.geo.gfsrv.net/cdn64/fa47268a4ecc341cdadcce8fb44e1f.jpg); }
+.phase5 #city_background_se { background-image:url(//gf2.geo.gfsrv.net/cdn46/c24f6236aec37c03f3da7b803089e7.jpg); }
+
+.phase1.isCapital #city_background_nw { background-image:url(//gf1.geo.gfsrv.net/cdnf3/b34b2a90ebf1541b1f28833dd5642e.jpg); }
+.phase1.isCapital #city_background_ne { background-image:url(//gf3.geo.gfsrv.net/cdnba/a83c042f318d637106eb71bb53ec5e.jpg); }
+.phase1.isCapital #city_background_sw { background-image:url(//gf2.geo.gfsrv.net/cdnad/b242d18913ffa01f483445a5f56727.jpg); }
+.phase1.isCapital #city_background_se { background-image:url(//gf2.geo.gfsrv.net/cdn7c/4a6f1abfa33f48e96dd2e84da38e21.jpg); }
+
+.phase2.isCapital #city_background_nw { background-image:url(//gf2.geo.gfsrv.net/cdn17/010da4a16f241ec4488cca90f7e527.jpg); }
+.phase2.isCapital #city_background_ne { background-image:url(//gf3.geo.gfsrv.net/cdn24/0654968fa6924e3c9cfd109bbd9e4a.jpg); }
+.phase2.isCapital #city_background_sw { background-image:url(//gf1.geo.gfsrv.net/cdnc0/76268085023fbfe8b754a91dcae395.jpg); }
+.phase2.isCapital #city_background_se { background-image:url(//gf1.geo.gfsrv.net/cdn97/34fd90244296e86888317f66b81c01.jpg); }
+
+.phase3.isCapital #city_background_nw { background-image:url(//gf2.geo.gfsrv.net/cdn11/ff5fd8e7769e255a9099a94373aebf.jpg); }
+.phase3.isCapital #city_background_ne { background-image:url(//gf1.geo.gfsrv.net/cdn68/734a0dbe4f7750097e5c207cb6954d.jpg); }
+.phase3.isCapital #city_background_sw { background-image:url(//gf2.geo.gfsrv.net/cdn44/c38b15cedcccc418fdf1b59fc296b5.jpg); }
+.phase3.isCapital #city_background_se { background-image:url(//gf3.geo.gfsrv.net/cdnee/4a7c1329b11ee9535b6e52338a49cb.jpg); }
+
+.phase4.isCapital #city_background_nw { background-image:url(//gf1.geo.gfsrv.net/cdnf2/c2f6feaa9f8b7fa37a151688eae980.jpg); }
+.phase4.isCapital #city_background_ne { background-image:url(//gf2.geo.gfsrv.net/cdn7d/67b3ac3b02599ab31d7f2bcd3f95aa.jpg); }
+.phase4.isCapital #city_background_sw { background-image:url(//gf1.geo.gfsrv.net/cdn92/936a18229734246cc73fe05f6ec3f4.jpg); }
+.phase4.isCapital #city_background_se { background-image:url(//gf2.geo.gfsrv.net/cdndb/04abfb66f809675c2ff213fe72efac.jpg); }
+
+.phase5.isCapital #city_background_nw { background-image:url(//gf3.geo.gfsrv.net/cdn8d/c5c3a5963b9cc5d368213ef9dadeab.jpg); }
+.phase5.isCapital #city_background_ne { background-image:url(//gf3.geo.gfsrv.net/cdn21/d89ca970f78d8853c522389b0a0d68.jpg); }
+.phase5.isCapital #city_background_sw { background-image:url(//gf1.geo.gfsrv.net/cdn64/fa47268a4ecc341cdadcce8fb44e1f.jpg); }
+.phase5.isCapital #city_background_se { background-image:url(//gf3.geo.gfsrv.net/cdnb8/8fabeae298eec4cd751010300ee973.jpg); }
+
+.recentlyResearched { position:relative; display:inline-block; }
+.recentlyResearched div {
+    background-image:url(//gf2.geo.gfsrv.net/cdna6/dde024aec1ef3840cbfdd92a855e1d.png);
+    height:32px;
+    width:32px;
+    position:absolute;
+    top:-22px;
+    left: 10px;
+}
+
+#city.draggable-city #locations .position24 .draggableElement {
+    margin-top: 60px;
+    margin-left: 130px;
+}
+#city.draggable-city #worldmap { 
+    transform: scale(1) !important;
+    zoom: 1 !important;
+    cursor: inherit;
+}
+#city.draggable-city #container #worldmap .draggableElement {
+    z-index: 1;
+    cursor: grab;
+}
+#city.draggable-city #container .mainContentBox .draggable,
+#city.draggable-city #container #worldmap .buildingItem a.hoverable {
+    cursor: default;
+}
+
+#city.draggable-city #cityCinema,
+#city.draggable-city #cityCinema .animationLight,
+#city.draggable-city #cityCinema #cityCinemaLink,
+#city.draggable-city #cityAmbrosiaFountainLink,
+#city.draggable-city #cityDailyTasks,
+#city.draggable-city #cityFlyingShop,
+#city.draggable-city #cityFlyingShop .extras,
+#city.draggable-city #cityRegistrationGifts {
+    cursor: default;
+}
+#city.draggable-city #cityRegistrationGifts:hover {
+    background-image: url(//gf3.geo.gfsrv.net/cdnb3/3f4a6d0d06892f635208085d7ea2ba.png);
+}
+#city.draggable-city #locations .buildingimg {
+    pointer-events: none;
+}
+#chronosForge .inner {
+    background: url(//gf2.geo.gfsrv.net/cdn14/c464020fea60b1755b101267aeeb16.png);
+    width: 650px;
+    height: 350px;
+    position: relative;
+}
+#chronosForge .inner .effect {
+    position: absolute;
+    top: 130px;
+    left: 70px;
+}
+
+.js_abyssalAmbushBanner {
+    height: 80px;
+    width: 200px;
+    background-repeat: no-repeat;
+    margin: 0 10px 10px;
+}
+.js_abyssalAmbushBanner.firstAbyssalAmbushIcon {
+    background-image: url(//gf2.geo.gfsrv.net/cdn7e/6b0256de2cdf5f3281ad15e2b91822.png);
+    top: -50px;
+    inset-inline-start: -38px;
+}
+
+.js_abyssalAmbushBanner.winterBronzeIcon {
+    background-image: url(//gf3.geo.gfsrv.net/cdnb5/d6033d3bbef5f9abe1ac93367876e2.png);
+}
+.js_abyssalAmbushBanner.winterSilverIcon {
+    background-image: url(//gf1.geo.gfsrv.net/cdnf1/dfea14ec17a615a033cf1eb4ce5eb4.png);
+}
+.js_abyssalAmbushBanner.winterGoldIcon {
+    background-image: url(//gf2.geo.gfsrv.net/cdna7/ad3378bfc8541b2d0a8a4caa07ca3e.png);
+}
+.js_abyssalAmbushBanner.newYear2026BronzeIcon {
+    background-image: url(//gf2.geo.gfsrv.net/cdn1d/98b3dba829f413011671c2a67ab17d.png);
+}
+.js_abyssalAmbushBanner.newYear2026SilverIcon {
+    background-image: url(//gf2.geo.gfsrv.net/cdn75/c473fba966069a029d2e4a90b827df.png);
+}
+.js_abyssalAmbushBanner.newYear2026GoldIcon {
+    background-image: url(//gf1.geo.gfsrv.net/cdn9e/9caa02f2a213e778b8e4f85cb4d09a.png);
+}
+
+.abyssalAmbushIcon.firstAbyssalAmbushIcon {
+    background-image: url(//gf2.geo.gfsrv.net/cdnd3/cd14d58d86c07a4dfeaf7025d4b96e.png);
+}
+.abyssalAmbushIcon.winterBronzeIcon {
+    background-image: url(//gf2.geo.gfsrv.net/cdnae/683932258d40fce41d751f3620c75a.png);
+}
+.abyssalAmbushIcon.winterSilverIcon {
+    background-image: url(//gf3.geo.gfsrv.net/cdn28/f0fcabd7cc403ef0934580915ab0ed.png);
+}
+.abyssalAmbushIcon.winterGoldIcon {
+    background-image: url(//gf1.geo.gfsrv.net/cdn0e/85b392b5c4361319799d1b76d08598.png);
+}
+.abyssalAmbushIcon.newYear2026BronzeIcon {
+    background-image: url(//gf1.geo.gfsrv.net/cdn6b/b21435896f278df4dd2219daae1f23.png);
+}
+.abyssalAmbushIcon.newYear2026SilverIcon {
+    background-image: url(//gf3.geo.gfsrv.net/cdnee/924c10baa157abe6f2008ff8d78321.png);
+}
+.abyssalAmbushIcon.newYear2026GoldIcon {
+    background-image: url(//gf3.geo.gfsrv.net/cdne1/2b77cb8326cea01e43e67ccb7f8223.png);
+}
+.god {
+    width: 155px;
+    height: 155px;
+}
+.god_big {
+    width: 200px;
+    height: 200px;
+}
+.god_small {
+    width: 40px;
+    height: 40px;
+}
+
+.god_pan.god {
+    background: url(//gf1.geo.gfsrv.net/cdn97/ac5de58f52e6563469c5dd15409d4c.png) no-repeat 0 0 transparent;
+}
+.god_pan.god_big {
+    background: url(//gf2.geo.gfsrv.net/cdnd9/f9a81cb4d2a66e2dcebe699d13ed4e.png) no-repeat 0 0 transparent;
+}
+.god_pan.god_small {
+    background: url(//gf3.geo.gfsrv.net/cdneb/2900f454db43b0c7fe7e049970f3bf.png) no-repeat 0 0 transparent;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   3. INVENTÁRIO IkaGX
+══════════════════════════════════════════════════════════════════ */
+.ikaext-inv-slots {
+  display: flex; flex-wrap: wrap; gap: 6px; padding: 12px;
+  background: #F5EDD6;
+}
+.ikaext-inv-slot {
+  position: relative; cursor: default;
+  border: 1px solid rgba(139,105,20,0.2); border-radius: 6px;
+  background: #EDE0BE; overflow: hidden;
+}
+.ikaext-inv-slot:hover { border-color: #C9A84C; background: #E5D5A8; }
+.ikaext-inv-vazio { text-align: center; padding: 40px; color: #9A7A3A; font-style: italic; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   4. MODAL HISTÓRICO DE IPs
+══════════════════════════════════════════════════════════════════ */
+:root {
+        --bg:      #F5EDD6;
+        --bg-card: #EDE0BE;
+        --bg-deep: #E5D5A8;
+        --gold:    #8B6914;
+        --gold-lt: #C9A84C;
+        --text:    #3D2B00;
+        --text-2:  #6B4E1A;
+        --text-3:  #9A7A3A;
+        --border:  rgba(139,105,20,0.2);
+        --shadow:  0 8px 32px rgba(100,70,0,0.18);
+      }
+
+      #ikaext-btn-logs {
+        position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+        background: var(--bg-card); color: var(--gold);
+        border: 1px solid var(--border); border-radius: 8px;
+        padding: 9px 16px; font-size: 13px; cursor: pointer;
+        font-family: Inter, sans-serif; font-weight: 600;
+        box-shadow: var(--shadow);
+      }
+      #ikaext-btn-logs:hover { background: var(--bg-deep); }
+
+      #ikaext-modal-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(50,30,0,0.55); backdrop-filter: blur(4px);
+        z-index: 10000; justify-content: center; align-items: center;
+        font-family: Inter, sans-serif;
+      }
+      #ikaext-modal-overlay.aberta { display: flex; }
+
+      #ikaext-modal {
+        background: var(--bg); border-radius: 16px;
+        width: 500px; max-width: 96vw; max-height: 88vh;
+        display: flex; flex-direction: column;
+        border: 1.5px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      /* Header */
+      #ikaext-modal-header {
+        padding: 14px 18px; border-bottom: 1px solid var(--border);
+        display: flex; align-items: center; gap: 12px; position: relative;
+      }
+      #ikaext-modal-icone {
+        width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+        background: var(--bg-deep); border: 1.5px solid var(--gold-lt);
+        display: flex; align-items: center; justify-content: center; font-size: 18px;
+      }
+      #ikaext-modal-titulo-wrap { flex: 1; }
+      #ikaext-modal-titulo {
+        font-family: 'Cinzel', serif; font-size: 15px;
+        font-weight: 600; color: var(--text); margin: 0; letter-spacing: 0.03em;
+      }
+      .ikaext-badges-header { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+      .ikaext-badge-h {
+        background: var(--bg-deep); border: 1px solid var(--border);
+        border-radius: 20px; padding: 2px 10px; font-size: 11px; color: var(--text-2);
+        display: flex; align-items: center; gap: 4px;
+      }
+      .ikaext-badge-h.ouro { color: var(--gold); border-color: var(--gold-lt); }
+      #ikaext-marca { position: absolute; right: 48px; top: 14px; font-family: 'Cinzel', serif; font-size: 11px; color: var(--text-3); letter-spacing: 0.08em; }
+      #ikaext-modal-fechar {
+        background: var(--bg-deep); border: 1px solid var(--border);
+        border-radius: 8px; width: 28px; height: 28px; cursor: pointer;
+        color: var(--text-3); font-size: 14px; display: flex;
+        align-items: center; justify-content: center; flex-shrink: 0;
+      }
+      #ikaext-modal-fechar:hover { color: var(--gold); border-color: var(--gold-lt); }
+
+      /* Busca */
+      #ikaext-busca-wrapper { padding: 12px 18px; border-bottom: 1px solid var(--border); }
+      #ikaext-busca {
+        width: 100%; box-sizing: border-box; background: var(--bg-card);
+        border: 1px solid var(--border); border-radius: 10px; color: var(--text);
+        padding: 9px 14px 9px 36px; font-size: 13px; outline: none;
+        font-family: Inter, sans-serif;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239A7A3A' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: 12px center;
+      }
+      #ikaext-busca:focus { border-color: var(--gold-lt); }
+      #ikaext-busca::placeholder { color: var(--text-3); }
+
+      /* Corpo */
+      #ikaext-modal-corpo { overflow-y: auto; padding: 12px 18px; flex: 1; scrollbar-width: none; }
+      #ikaext-modal-corpo::-webkit-scrollbar { display: none; }
+
+      /* Servidor acordeão */
+      .ikaext-servidor-bloco { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+      .ikaext-servidor-header {
+        display: flex; align-items: center; gap: 10px;
+        background: var(--bg-card); padding: 10px 14px; cursor: pointer; user-select: none;
+      }
+      .ikaext-servidor-header:hover { background: var(--bg-deep); }
+      .ikaext-srv-icone {
+        width: 30px; height: 30px; border-radius: 8px;
+        background: var(--bg-deep); border: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+      }
+      .ikaext-srv-nome { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+      .ikaext-srv-badges { display: flex; align-items: center; gap: 6px; }
+      .ikaext-badge { border-radius: 20px; padding: 2px 10px; font-size: 11px; }
+      .ikaext-badge.cinza { background: var(--bg-deep); color: var(--text-2); border: 1px solid var(--border); }
+      .ikaext-badge.ouro  { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid var(--gold-lt); }
+      .ikaext-srv-chevron { font-size: 10px; color: var(--text-3); transition: transform 0.2s; margin-left: 4px; }
+      .ikaext-servidor-header.colapsado .ikaext-srv-chevron { transform: rotate(-90deg); }
+
+      .ikaext-servidor-conteudo { padding: 6px; background: var(--bg); }
+      .ikaext-servidor-conteudo.escondido { display: none; }
+
+      /* Card de conta */
+      .ikaext-conta-card {
+        display: flex; align-items: center; gap: 10px;
+        padding: 9px 10px; border-radius: 9px; cursor: pointer;
+      }
+      .ikaext-conta-card:hover { background: var(--bg-card); }
+      .ikaext-conta-avatar {
+        width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+        background: var(--bg-deep); border: 1.5px solid var(--gold-lt);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 13px; font-weight: 700; color: var(--gold);
+      }
+      .ikaext-conta-info { flex: 1; min-width: 0; }
+      .ikaext-conta-nome { font-size: 13px; font-weight: 600; color: var(--text); }
+      .ikaext-conta-alianca { font-size: 11px; color: var(--text-3); }
+      .ikaext-conta-meta { text-align: right; flex-shrink: 0; }
+      .ikaext-conta-ip { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); display: block; font-weight: 600; }
+      .ikaext-conta-data { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); }
+      .ikaext-conta-seta { color: var(--text-3); font-size: 14px; }
+
+      /* Destaque busca */
+      .ikaext-destaque { background: rgba(201,168,76,0.3); color: var(--gold); border-radius: 2px; padding: 0 2px; }
+
+      .ikaext-vazio, .ikaext-sem-resultado {
+        text-align: center; padding: 30px; color: var(--text-3); font-size: 13px; font-style: italic;
+      }
+
+      /* Footer */
+      #ikaext-modal-footer {
+        padding: 8px 18px; border-top: 1px solid var(--border);
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 11px; color: var(--text-3); background: var(--bg-card);
+      }
+      .ikaext-status-ativo { display: flex; align-items: center; gap: 5px; }
+      .ikaext-ponto-verde { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; }
+
+/* ══════════════════════════════════════════════════════════════════
+   5. MODAL DE PERFIL / DETALHES
+══════════════════════════════════════════════════════════════════ */
+#ikaext-perfil-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(50,30,0,0.55); backdrop-filter: blur(4px);
+        z-index: 10001; justify-content: center; align-items: center;
+        font-family: Inter, sans-serif;
+      }
+      #ikaext-perfil-overlay.aberta { display: flex; }
+
+      #ikaext-perfil-modal {
+        background: #F5EDD6; border-radius: 16px;
+        width: 560px; max-width: 96vw; max-height: 90vh;
+        display: flex; flex-direction: column;
+        border: 1.5px solid rgba(139,105,20,0.2);
+        box-shadow: 0 12px 40px rgba(100,70,0,0.22);
+        animation: ikaPerfFade 0.18s ease; overflow: hidden;
+      }
+      @keyframes ikaPerfFade { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
+
+      /* ── Header ── */
+      #ikaext-perfil-header {
+        padding: 16px 20px; border-bottom: 1px solid rgba(139,105,20,0.15);
+        display: flex; align-items: center; gap: 14px; background: #EDE0BE; position: relative;
+      }
+      #ikaext-perfil-back {
+        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
+        border-radius: 8px; width: 30px; height: 30px; cursor: pointer;
+        color: #8B6914; font-size: 14px; display: flex;
+        align-items: center; justify-content: center; flex-shrink: 0;
+      }
+      #ikaext-perfil-back:hover { background: #D9C898; }
+      #ikaext-perfil-avatar-wrap { position: relative; flex-shrink: 0; }
+      #ikaext-perfil-avatar {
+        width: 60px; height: 60px; border-radius: 50%;
+        background: #E5D5A8; border: 2.5px solid #C9A84C;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; font-weight: 700; color: #8B6914;
+      }
+      #ikaext-perfil-info { flex: 1; min-width: 0; }
+      #ikaext-perfil-titulo {
+        font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600;
+        color: #3D2B00; margin: 0; letter-spacing: 0.02em;
+      }
+      #ikaext-perfil-alianca-header { font-size: 12px; color: #6B4E1A; margin: 2px 0 6px; display: flex; align-items: center; gap: 4px; }
+      .ikaext-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+      .ikaext-tag {
+        border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 500;
+        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.25); color: #6B4E1A;
+      }
+      .ikaext-tag.verde { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #166534; }
+      #ikaext-perfil-marca { position: absolute; right: 52px; top: 16px; font-family: 'Cinzel', serif; font-size: 11px; color: #9A7A3A; letter-spacing: 0.08em; }
+      #ikaext-perfil-fechar {
+        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
+        border-radius: 8px; width: 28px; height: 28px; cursor: pointer;
+        color: #9A7A3A; font-size: 14px; display: flex; align-items: center; justify-content: center;
+      }
+      #ikaext-perfil-fechar:hover { color: #8B6914; border-color: #C9A84C; }
+
+      /* ── Corpo ── */
+      #ikaext-perfil-corpo { overflow-y: auto; padding: 16px 20px; flex: 1; scrollbar-width: none; }
+      #ikaext-perfil-corpo::-webkit-scrollbar { display: none; }
+
+      /* Títulos de seção */
+      .ikaext-secao {
+        font-size: 10px; font-weight: 600; color: #9A7A3A; text-transform: uppercase;
+        letter-spacing: 0.1em; text-align: center; margin: 14px 0 8px;
+      }
+
+      /* Cards de estatísticas */
+      .ikaext-stats-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; margin-bottom: 4px; }
+      .ikaext-stat-card {
+        background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15);
+        border-radius: 10px; padding: 10px 6px; text-align: center;
+      }
+      .ikaext-stat-card:hover { border-color: #C9A84C; }
+      .ikaext-stat-icone { font-size: 16px; margin-bottom: 4px; }
+      .ikaext-stat-valor { font-size: 13px; font-weight: 700; color: #8B6914; display: block; }
+      .ikaext-stat-label { font-size: 9px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+
+      /* Especializações */
+      .ikaext-espec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .ikaext-espec-item { background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15); border-radius: 10px; padding: 10px 12px; }
+      .ikaext-espec-topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+      .ikaext-espec-nome { font-size: 12px; font-weight: 600; color: #3D2B00; display: flex; align-items: center; gap: 5px; }
+      .ikaext-espec-nivel { font-size: 11px; color: #8B6914; font-weight: 600; }
+      .ikaext-barra-bg { height: 4px; background: rgba(139,105,20,0.15); border-radius: 4px; overflow: hidden; }
+      .ikaext-barra-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+
+      /* Identificação */
+      .ikaext-id-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+      .ikaext-id-card {
+        background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15);
+        border-radius: 10px; padding: 10px 10px 8px;
+      }
+      .ikaext-id-label { font-size: 9px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+      .ikaext-id-valor { font-size: 12px; font-weight: 600; color: #3D2B00; }
+      .ikaext-id-valor.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+      .ikaext-id-valor.ouro { color: #8B6914; font-size: 15px; }
+
+      /* Linha do tempo */
+      .ikaext-timeline-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+      .ikaext-tl-card {
+        background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15);
+        border-radius: 10px; padding: 12px; text-align: center;
+      }
+      .ikaext-tl-icone { font-size: 20px; margin-bottom: 6px; color: #C9A84C; }
+      .ikaext-tl-label { font-size: 9px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+      .ikaext-tl-data { font-size: 13px; font-weight: 700; color: #3D2B00; }
+      .ikaext-tl-hora { font-size: 11px; color: #9A7A3A; font-family: 'JetBrains Mono', monospace; }
+
+      /* Tabela de IPs */
+      .ikaext-ip-tabela { width: 100%; border-collapse: collapse; background: #EDE0BE; border-radius: 10px; overflow: hidden; }
+      .ikaext-ip-tabela th { font-size: 10px; color: #9A7A3A; text-transform: uppercase; padding: 8px 12px; text-align: left; border-bottom: 1px solid rgba(139,105,20,0.15); }
+      .ikaext-ip-tabela td { padding: 8px 12px; border-bottom: 1px solid rgba(139,105,20,0.08); vertical-align: middle; font-size: 12px; color: #3D2B00; }
+      .ikaext-ip-tabela tr:last-child td { border-bottom: none; }
+      .ikaext-ip-tabela tr:hover td { background: rgba(201,168,76,0.07); }
+      .ikaext-status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+      .ikaext-status-dot.atual    { background: #4ade80; }
+      .ikaext-status-dot.anterior { background: #9A7A3A; }
+      .ikaext-status-txt { font-size: 11px; font-weight: 500; }
+      .ikaext-ip-badge-leve {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+        color: #8B6914; background: rgba(201,168,76,0.15);
+        border: 1px solid rgba(201,168,76,0.35); border-radius: 5px; padding: 2px 8px;
+      }
+
+      /* Footer */
+      #ikaext-perfil-footer {
+        padding: 12px 20px; border-top: 1px solid rgba(139,105,20,0.15);
+        display: flex; gap: 8px; align-items: center; background: #EDE0BE;
+      }
+      .ikaext-btn-sec {
+        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
+        border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 500;
+        color: #6B4E1A; cursor: pointer; font-family: Inter, sans-serif;
+        display: flex; align-items: center; gap: 5px;
+      }
+      .ikaext-btn-sec:hover { border-color: #C9A84C; color: #3D2B00; }
+      .ikaext-btn-pri {
+        margin-left: auto; background: #C9A84C; border: none;
+        border-radius: 8px; padding: 7px 20px; font-size: 12px; font-weight: 700;
+        color: #3D2B00; cursor: pointer; font-family: Inter, sans-serif;
+        display: flex; align-items: center; gap: 5px;
+      }
+      .ikaext-btn-pri:hover { background: #B8962E; }
+
+      .ikaext-sem-dados { text-align:center; padding:30px; color:#9A7A3A; font-style:italic; font-size:13px; }
+
+      /* Império embutido */
+      .ikaext-imp-topo { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+      .ikaext-imp-resumo { font-size:11px; color:#9A7A3A; flex:1; min-width:120px; }
+      .ikaext-imp-abas { display:flex; gap:6px; }
+      .ikaext-imp-aba.ativa { background:#C9A84C; color:#3D2B00; border-color:#C9A84C; font-weight:700; }
+      .ikaext-imp-scroll { overflow-x:auto; max-width:100%; border:1px solid rgba(139,105,20,0.15); border-radius:10px; }
+      .ikaext-imp-scroll::-webkit-scrollbar { height:8px; }
+      .ikaext-imp-scroll::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:6px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   6. MODAL IMPÉRIO
+══════════════════════════════════════════════════════════════════ */
+#ikaext-empire-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(50,30,0,0.55); backdrop-filter: blur(4px);
+        z-index: 10001; justify-content: center; align-items: center;
+        font-family: Inter, sans-serif;
+      }
+      #ikaext-empire-overlay.aberta { display: flex; }
+
+      #ikaext-empire-modal {
+        background: #F5EDD6; border-radius: 16px;
+        width: 1180px; max-width: 96vw; max-height: 90vh;
+        display: flex; flex-direction: column;
+        border: 1.5px solid rgba(139,105,20,0.2);
+        box-shadow: 0 12px 40px rgba(100,70,0,0.22);
+        animation: ikaEmpFade 0.18s ease; overflow: hidden;
+      }
+      @keyframes ikaEmpFade { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
+
+      #ikaext-empire-header {
+        padding: 14px 20px; border-bottom: 1px solid rgba(139,105,20,0.15);
+        display: flex; align-items: center; gap: 12px; background: #EDE0BE; position: relative;
+      }
+      #ikaext-empire-titulo {
+        font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600;
+        color: #3D2B00; margin: 0; letter-spacing: 0.02em; margin-right: auto;
+      }
+      #ikaext-empire-marca { font-family: 'Cinzel', serif; font-size: 11px; color: #9A7A3A; letter-spacing: 0.08em; margin-right: 6px; }
+      #ikaext-empire-fechar {
+        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
+        border-radius: 8px; width: 28px; height: 28px; cursor: pointer;
+        color: #9A7A3A; font-size: 14px; display: flex; align-items: center; justify-content: center;
+      }
+      #ikaext-empire-fechar:hover { color: #8B6914; border-color: #C9A84C; }
+
+      .ikaext-empire-btn {
+        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
+        border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 500;
+        color: #6B4E1A; cursor: pointer; font-family: Inter, sans-serif;
+      }
+      .ikaext-empire-btn:hover { border-color: #C9A84C; color: #3D2B00; }
+
+      #ikaext-empire-abas { display: flex; gap: 6px; padding: 10px 20px 0; background: #EDE0BE; }
+      .ikaext-empire-aba {
+        padding: 7px 18px; border: 1px solid rgba(139,105,20,0.2); border-bottom: none;
+        border-radius: 8px 8px 0 0; cursor: pointer; font-size: 13px; font-weight: 500;
+        background: #E5D5A8; color: #6B4E1A;
+      }
+      .ikaext-empire-aba.ativa { background: #F5EDD6; color: #3D2B00; font-weight: 700; }
+
+      #ikaext-empire-status { padding: 6px 20px; font-size: 11px; color: #9A7A3A; min-height: 14px; }
+
+      #ikaext-empire-corpo { overflow: auto; padding: 0 20px 18px; flex: 1; }
+      #ikaext-empire-corpo::-webkit-scrollbar { height: 10px; width: 10px; }
+      #ikaext-empire-corpo::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 6px; }
+
+      .ikaext-empire-vazio { text-align: center; padding: 40px; color: #9A7A3A; font-style: italic; }
+
+      .ikaext-empire-tabela { border-collapse: collapse; font-size: 12px; width: 100%; background: #F5EDD6; }
+      .ikaext-empire-tabela th, .ikaext-empire-tabela td {
+        border: 1px solid rgba(139,105,20,0.18); padding: 4px 8px; text-align: right; white-space: nowrap; color: #3D2B00;
+      }
+      .ikaext-empire-tabela th { background: #EDE0BE; position: sticky; top: 0; z-index: 2; color: #6B4E1A; font-weight: 600; }
+      .ikaext-empire-tabela td.ikaext-empire-cidade, .ikaext-empire-tabela th.ikaext-empire-cidade {
+        position: sticky; left: 0; text-align: left; background: #EDE0BE; z-index: 1; font-weight: 600;
+      }
+      .ikaext-empire-tabela th.ikaext-empire-cidade { z-index: 3; }
+      .ikaext-empire-tabela tbody tr:hover td { background: rgba(201,168,76,0.08); }
+      .ikaext-empire-prod { color: #2e7d32; font-size: 10px; margin-left: 4px; }
+      .ikaext-res-icon { width: 20px; height: 20px; vertical-align: middle; display: block; margin: 0 auto; }
+
+      /* Inventário — usa os sprites originais do jogo */
+      .ikaext-inv-slots {
+        display: flex; flex-wrap: wrap; gap: 6px; padding: 12px;
+        background: #F5EDD6;
+      }
+      .ikaext-inv-slot {
+        position: relative; cursor: default;
+        border: 1px solid rgba(139,105,20,0.2); border-radius: 6px;
+        background: #EDE0BE; overflow: hidden;
+      }
+      .ikaext-inv-slot:hover { border-color: #C9A84C; background: #E5D5A8; }
+      .ikaext-inv-vazio { text-align: center; padding: 40px; color: #9A7A3A; font-style: italic; }
+
+      /* Building sprite icons in header */
+      th.ikagx-emp-building { width: 45px; padding: 2px 1px !important; text-align: center; }
+      th.ikagx-emp-building div { height: 41px; width: 43px; background-repeat: no-repeat; margin: 0 auto; }
+      .ikagx-emp-building-townHall div       { background-position: 0 0; }
+      .ikagx-emp-building-academy div        { background-position: -43px 0; }
+      .ikagx-emp-building-warehouse div      { background-position: -86px 0; }
+      .ikagx-emp-building-tavern div         { background-position: -129px 0; }
+      .ikagx-emp-building-palace div         { background-position: -172px 0; }
+      .ikagx-emp-building-palaceColony div   { background-position: -215px 0; }
+      .ikagx-emp-building-museum div         { background-position: -258px 0; }
+      .ikagx-emp-building-port div           { background-position: -301px 0; }
+      .ikagx-emp-building-shipyard div       { background-position: -345px 0; }
+      .ikagx-emp-building-barracks div       { background-position: -388px 0; }
+      .ikagx-emp-building-wall div           { background-position: -431px 0; }
+      .ikagx-emp-building-embassy div        { background-position: -474px 0; }
+      .ikagx-emp-building-branchOffice div   { background-position: -517px 0; }
+      .ikagx-emp-building-workshop div       { background-position: -560px 0; }
+      .ikagx-emp-building-safehouse div      { background-position: -603px 0; }
+      .ikagx-emp-building-forester div       { background-position: -646px 0; }
+      .ikagx-emp-building-glassblowing div   { background-position: -689px 0; }
+      .ikagx-emp-building-alchemist div      { background-position: -733px 0; }
+      .ikagx-emp-building-winegrower div     { background-position: -776px 0; }
+      .ikagx-emp-building-stonemason div     { background-position: -819px 0; }
+      .ikagx-emp-building-carpentering div   { background-position: -862px 0; }
+      .ikagx-emp-building-optician div       { background-position: -905px 0; }
+      .ikagx-emp-building-fireworker div     { background-position: -948px 0; }
+      .ikagx-emp-building-vineyard div       { background-position: -991px 0; }
+      .ikagx-emp-building-architect div      { background-position: -1034px 0; }
+      .ikagx-emp-building-temple div         { background-position: -1077px 0; }
+      .ikagx-emp-building-dump div           { background-position: -1121px 0; }
+      .ikagx-emp-building-pirateFortress div { background-position: -1164px 0; }
+      .ikagx-emp-building-blackMarket div    { background-position: -1207px 0; }
+      .ikagx-emp-building-marineChartArchive div { background-position: -1297px 0; }
+      .ikagx-emp-building-shrineOfOlympus div { background-position: -1250px 0; }
+
+      .ikaext-empire-srv { font-family: 'Cinzel', serif; font-size: 13px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.08em; margin: 16px 0 8px; }
+      .ikaext-empire-item {
+        display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 6px;
+        background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15); border-radius: 10px; cursor: pointer;
+      }
+      .ikaext-empire-item:hover { border-color: #C9A84C; background: #E5D5A8; }
+      .ikaext-empire-item-av {
+        width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; background: #E5D5A8;
+        border: 1.5px solid #C9A84C; display: flex; align-items: center; justify-content: center;
+        font-size: 14px; font-weight: 700; color: #8B6914;
+      }
+      .ikaext-empire-item-info { flex: 1; min-width: 0; }
+      .ikaext-empire-item-nome { font-size: 13px; font-weight: 600; color: #3D2B00; }
+      .ikaext-empire-item-meta { font-size: 11px; color: #9A7A3A; }
+      .ikaext-empire-item-seta { color: #9A7A3A; font-size: 16px; }
+
+      #ikaext-btn-imperios {
+        position: fixed; bottom: 20px; right: 190px; z-index: 9999;
+        background: #EDE0BE; color: #8B6914;
+        border: 1px solid rgba(139,105,20,0.2); border-radius: 8px;
+        padding: 9px 16px; font-size: 13px; cursor: pointer;
+        font-family: Inter, sans-serif; font-weight: 600;
+        box-shadow: 0 8px 32px rgba(100,70,0,0.18);
+      }
+      #ikaext-btn-imperios:hover { background: #E5D5A8; }

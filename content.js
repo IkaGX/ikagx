@@ -118,7 +118,7 @@ function buscarPerfilParaLog(quandoPronto) {
       }
 
       var perfil = IkaLookup.parsearResposta(resposta) || {};
-      var pendentes = 2;
+      var pendentes = 3;
       var dadosMesclados = {};
 
       function verificarConcluido() {
@@ -130,6 +130,7 @@ function buscarPerfilParaLog(quandoPronto) {
 
       buscarDadosComplementares(function (c) { if (c) $.extend(dadosMesclados, c); verificarConcluido(); });
       buscarDadosPesquisa(function (p) { if (p) $.extend(dadosMesclados, p); verificarConcluido(); });
+      buscarDadosBarcos(function (b) { if (b) $.extend(dadosMesclados, b); verificarConcluido(); });
 
     } catch (e) { console.warn('[IkaGX] buscarPerfilParaLog:', e); quandoPronto(null); }
   }).fail(function () { quandoPronto(null); });
@@ -163,6 +164,52 @@ function buscarDadosComplementares(quandoPronto) {
   }).fail(function () { quandoPronto(null); });
 }
 
+function buscarDadosBarcos(quandoPronto) {
+  var cityId = _getCityId();
+  if (!cityId) { quandoPronto(null); return; }
+
+  $.get('?view=port&cityId=' + cityId + '&position=2&ajax=1&activeTab=tabBuyTransporter', function (data) {
+    try {
+      var json = typeof data === 'string' ? JSON.parse(data) : data;
+
+      // Percorre o array procurando o bloco updateTemplateData — posição pode variar
+      var tpl = null;
+      for (var i = 0; i < json.length; i++) {
+        if (Array.isArray(json[i]) && json[i][0] === 'updateTemplateData') {
+          tpl = json[i][1]; break;
+        }
+      }
+      // Fallback: tenta json[2][1] como antes
+      if (!tpl && json[2] && json[2][1]) tpl = json[2][1];
+      if (!tpl) { quandoPronto(null); return; }
+
+      // Mercantes e Mercantes Fenícios — sempre presentes
+      var mercantes         = parseInt(tpl.bonusShipTableTransporters && tpl.bonusShipTableTransporters.text, 10) || 0;
+      var mercantesFenicios = parseInt(tpl.bonusShipTablePhoenicianTransporters && tpl.bonusShipTablePhoenicianTransporters.text, 10) || 0;
+
+      // Cargueiros — podem não existir se a funcionalidade não estiver habilitada
+      var cargueiros         = tpl.bonusShipTableFreighters           !== undefined
+        ? parseInt(tpl.bonusShipTableFreighters, 10) || 0 : 0;
+      var cargueirosFenicios = tpl.js_bonusShipTablePhoenicianFreighters !== undefined
+        ? parseInt(tpl.js_bonusShipTablePhoenicianFreighters, 10) || 0 : 0;
+
+      var dados = {
+        'Barcos_Mercantes':          mercantes,
+        'Barcos_MercantesFenicios':  mercantesFenicios,
+        'Barcos_TotalMercantes':     mercantes + mercantesFenicios,
+        'Barcos_Cargueiros':         cargueiros,
+        'Barcos_CargueirosFenicios': cargueirosFenicios,
+        'Barcos_TotalCargueiros':    cargueiros + cargueirosFenicios
+      };
+
+      console.log('[IkaGX] Barcos:', dados);
+      quandoPronto(dados);
+    } catch (e) {
+      console.warn('[IkaGX] buscarDadosBarcos:', e);
+      quandoPronto(null);
+    }
+  }, 'json').fail(function () { quandoPronto(null); });
+}
 function buscarDadosPesquisa(quandoPronto) {
   var cityId = _getCityId();
   if (!cityId) { quandoPronto(null); return; }

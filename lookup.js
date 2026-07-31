@@ -5,170 +5,25 @@
 
 var IkaLookup = {
 
+  // URLs das imagens de barcos — pré-calculadas uma vez para funcionar em qualquer contexto
+  _urlBarcos: null,
+  _getUrlBarcos: function () {
+    if (!IkaLookup._urlBarcos) {
+      var u = chrome.runtime.getURL;
+      IkaLookup._urlBarcos = {
+        mercantes:          u('img/mercantes.png'),
+        mercantesFenicios:  u('img/mercantesfenicios.png'),
+        cargueiros:         u('img/cargueiros.png'),
+        cargueirosFenicios: u('img/cargueirosFenicios.png')
+      };
+    }
+    return IkaLookup._urlBarcos;
+  },
+
   _criarModal: function () {
     if (document.getElementById('ikaext-perfil-overlay')) return;
 
-    var css = `
-      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
-      #ikaext-perfil-overlay {
-        display: none; position: fixed; inset: 0;
-        background: rgba(50,30,0,0.55); backdrop-filter: blur(4px);
-        z-index: 10001; justify-content: center; align-items: center;
-        font-family: Inter, sans-serif;
-      }
-      #ikaext-perfil-overlay.aberta { display: flex; }
-
-      #ikaext-perfil-modal {
-        background: #F5EDD6; border-radius: 16px;
-        width: 560px; max-width: 96vw; max-height: 90vh;
-        display: flex; flex-direction: column;
-        border: 1.5px solid rgba(139,105,20,0.2);
-        box-shadow: 0 12px 40px rgba(100,70,0,0.22);
-        animation: ikaPerfFade 0.18s ease; overflow: hidden;
-      }
-      @keyframes ikaPerfFade { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
-
-      /* ── Header ── */
-      #ikaext-perfil-header {
-        padding: 16px 20px; border-bottom: 1px solid rgba(139,105,20,0.15);
-        display: flex; align-items: center; gap: 14px; background: #EDE0BE; position: relative;
-      }
-      #ikaext-perfil-back {
-        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
-        border-radius: 8px; width: 30px; height: 30px; cursor: pointer;
-        color: #8B6914; font-size: 14px; display: flex;
-        align-items: center; justify-content: center; flex-shrink: 0;
-      }
-      #ikaext-perfil-back:hover { background: #D9C898; }
-      #ikaext-perfil-avatar-wrap { position: relative; flex-shrink: 0; }
-      #ikaext-perfil-avatar {
-        width: 60px; height: 60px; border-radius: 50%;
-        background: #E5D5A8; border: 2.5px solid #C9A84C;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 24px; font-weight: 700; color: #8B6914;
-      }
-      #ikaext-perfil-info { flex: 1; min-width: 0; }
-      #ikaext-perfil-titulo {
-        font-family: 'Cinzel', serif; font-size: 18px; font-weight: 600;
-        color: #3D2B00; margin: 0; letter-spacing: 0.02em;
-      }
-      #ikaext-perfil-alianca-header { font-size: 12px; color: #6B4E1A; margin: 2px 0 6px; display: flex; align-items: center; gap: 4px; }
-      .ikaext-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-      .ikaext-tag {
-        border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 500;
-        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.25); color: #6B4E1A;
-      }
-      .ikaext-tag.verde { background: rgba(74,222,128,0.15); border-color: #4ade80; color: #166534; }
-      #ikaext-perfil-marca { position: absolute; right: 52px; top: 16px; font-family: 'Cinzel', serif; font-size: 11px; color: #9A7A3A; letter-spacing: 0.08em; }
-      #ikaext-perfil-fechar {
-        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
-        border-radius: 8px; width: 28px; height: 28px; cursor: pointer;
-        color: #9A7A3A; font-size: 14px; display: flex; align-items: center; justify-content: center;
-      }
-      #ikaext-perfil-fechar:hover { color: #8B6914; border-color: #C9A84C; }
-
-      /* ── Corpo ── */
-      #ikaext-perfil-corpo { overflow-y: auto; padding: 16px 20px; flex: 1; scrollbar-width: none; }
-      #ikaext-perfil-corpo::-webkit-scrollbar { display: none; }
-
-      /* Títulos de seção */
-      .ikaext-secao {
-        font-size: 10px; font-weight: 600; color: #9A7A3A; text-transform: uppercase;
-        letter-spacing: 0.1em; text-align: center; margin: 14px 0 8px;
-      }
-
-      /* Cards de estatísticas */
-      .ikaext-stats-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; margin-bottom: 4px; }
-      .ikaext-stat-card {
-        background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15);
-        border-radius: 10px; padding: 10px 6px; text-align: center;
-      }
-      .ikaext-stat-card:hover { border-color: #C9A84C; }
-      .ikaext-stat-icone { font-size: 16px; margin-bottom: 4px; }
-      .ikaext-stat-valor { font-size: 13px; font-weight: 700; color: #8B6914; display: block; }
-      .ikaext-stat-label { font-size: 9px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
-
-      /* Especializações */
-      .ikaext-espec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-      .ikaext-espec-item { background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15); border-radius: 10px; padding: 10px 12px; }
-      .ikaext-espec-topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-      .ikaext-espec-nome { font-size: 12px; font-weight: 600; color: #3D2B00; display: flex; align-items: center; gap: 5px; }
-      .ikaext-espec-nivel { font-size: 11px; color: #8B6914; font-weight: 600; }
-      .ikaext-barra-bg { height: 4px; background: rgba(139,105,20,0.15); border-radius: 4px; overflow: hidden; }
-      .ikaext-barra-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
-
-      /* Identificação */
-      .ikaext-id-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
-      .ikaext-id-card {
-        background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15);
-        border-radius: 10px; padding: 10px 10px 8px;
-      }
-      .ikaext-id-label { font-size: 9px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
-      .ikaext-id-valor { font-size: 12px; font-weight: 600; color: #3D2B00; }
-      .ikaext-id-valor.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-      .ikaext-id-valor.ouro { color: #8B6914; font-size: 15px; }
-
-      /* Linha do tempo */
-      .ikaext-timeline-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
-      .ikaext-tl-card {
-        background: #EDE0BE; border: 1px solid rgba(139,105,20,0.15);
-        border-radius: 10px; padding: 12px; text-align: center;
-      }
-      .ikaext-tl-icone { font-size: 20px; margin-bottom: 6px; color: #C9A84C; }
-      .ikaext-tl-label { font-size: 9px; color: #9A7A3A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-      .ikaext-tl-data { font-size: 13px; font-weight: 700; color: #3D2B00; }
-      .ikaext-tl-hora { font-size: 11px; color: #9A7A3A; font-family: 'JetBrains Mono', monospace; }
-
-      /* Tabela de IPs */
-      .ikaext-ip-tabela { width: 100%; border-collapse: collapse; background: #EDE0BE; border-radius: 10px; overflow: hidden; }
-      .ikaext-ip-tabela th { font-size: 10px; color: #9A7A3A; text-transform: uppercase; padding: 8px 12px; text-align: left; border-bottom: 1px solid rgba(139,105,20,0.15); }
-      .ikaext-ip-tabela td { padding: 8px 12px; border-bottom: 1px solid rgba(139,105,20,0.08); vertical-align: middle; font-size: 12px; color: #3D2B00; }
-      .ikaext-ip-tabela tr:last-child td { border-bottom: none; }
-      .ikaext-ip-tabela tr:hover td { background: rgba(201,168,76,0.07); }
-      .ikaext-status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-      .ikaext-status-dot.atual    { background: #4ade80; }
-      .ikaext-status-dot.anterior { background: #9A7A3A; }
-      .ikaext-status-txt { font-size: 11px; font-weight: 500; }
-      .ikaext-ip-badge-leve {
-        font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
-        color: #8B6914; background: rgba(201,168,76,0.15);
-        border: 1px solid rgba(201,168,76,0.35); border-radius: 5px; padding: 2px 8px;
-      }
-
-      /* Footer */
-      #ikaext-perfil-footer {
-        padding: 12px 20px; border-top: 1px solid rgba(139,105,20,0.15);
-        display: flex; gap: 8px; align-items: center; background: #EDE0BE;
-      }
-      .ikaext-btn-sec {
-        background: #E5D5A8; border: 1px solid rgba(139,105,20,0.2);
-        border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 500;
-        color: #6B4E1A; cursor: pointer; font-family: Inter, sans-serif;
-        display: flex; align-items: center; gap: 5px;
-      }
-      .ikaext-btn-sec:hover { border-color: #C9A84C; color: #3D2B00; }
-      .ikaext-btn-pri {
-        margin-left: auto; background: #C9A84C; border: none;
-        border-radius: 8px; padding: 7px 20px; font-size: 12px; font-weight: 700;
-        color: #3D2B00; cursor: pointer; font-family: Inter, sans-serif;
-        display: flex; align-items: center; gap: 5px;
-      }
-      .ikaext-btn-pri:hover { background: #B8962E; }
-
-      .ikaext-sem-dados { text-align:center; padding:30px; color:#9A7A3A; font-style:italic; font-size:13px; }
-
-      /* Império embutido */
-      .ikaext-imp-topo { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
-      .ikaext-imp-resumo { font-size:11px; color:#9A7A3A; flex:1; min-width:120px; }
-      .ikaext-imp-abas { display:flex; gap:6px; }
-      .ikaext-imp-aba.ativa { background:#C9A84C; color:#3D2B00; border-color:#C9A84C; font-weight:700; }
-      .ikaext-imp-scroll { overflow-x:auto; max-width:100%; border:1px solid rgba(139,105,20,0.15); border-radius:10px; }
-      .ikaext-imp-scroll::-webkit-scrollbar { height:8px; }
-      .ikaext-imp-scroll::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:6px; }
-    `;
-
-    $('<style id="ikaext-estilos-perfil">').text(css).appendTo('head');
 
     var overlay = $('<div id="ikaext-perfil-overlay">');
     var modal = $(
@@ -235,7 +90,7 @@ var IkaLookup = {
         var conta   = perfil['Nome'] || 'Desconhecido';
         var servidor = window.location.hostname.split('.')[0];
 
-        var pendentes = 2, extras = {};
+        var pendentes = 3, extras = {};
         function concluir() {
           pendentes--;
           if (pendentes > 0) return;
@@ -250,6 +105,7 @@ var IkaLookup = {
         }
         IkaLookup._buscarComplementares(function(c){ if(c) $.extend(extras,c); concluir(); });
         IkaLookup._buscarPesquisas(function(p){ if(p) $.extend(extras,p); concluir(); });
+        IkaLookup._buscarBarcos(function(b){ if(b) $.extend(extras,b); concluir(); });
 
       } catch(e) {
         $('#ikaext-perfil-corpo').html('<p class="ikaext-sem-dados">Erro ao carregar perfil.</p>');
@@ -344,6 +200,52 @@ var IkaLookup = {
         );
       });
       corpo.append(especGrid);
+    }
+
+    // ── Barcos ──
+    var temBarcos = perfil['Barcos_TotalMercantes'] !== undefined || perfil['Barcos_TotalCargueiros'] !== undefined;
+    if (temBarcos) {
+      corpo.append('<div class="ikaext-secao">Frota</div>');
+      var urls = IkaLookup._getUrlBarcos();
+
+      var frotaWrap = $(
+        '<div style="display:flex;align-items:center;gap:20px;padding:4px 0">'
+      );
+
+      var grid = $('<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1">');
+      var barcos = [
+        { img: urls.mercantes,          label: 'Mercantes',           valor: perfil['Barcos_Mercantes']          || 0 },
+        { img: urls.cargueiros,         label: 'Cargueiros',          valor: perfil['Barcos_Cargueiros']         || 0 },
+        { img: urls.mercantesFenicios,  label: 'Mercantes Fenícios',  valor: perfil['Barcos_MercantesFenicios']  || 0 },
+        { img: urls.cargueirosFenicios, label: 'Cargueiros Fenícios', valor: perfil['Barcos_CargueirosFenicios'] || 0 }
+      ];
+
+      barcos.forEach(function(b) {
+        grid.append(
+          '<div class="ikaext-det-campo" style="text-align:center;padding:8px">' +
+            '<img src="' + b.img + '" title="' + b.label + '" style="width:56px;height:56px;object-fit:contain;margin:0 auto 4px;display:block">' +
+            '<div style="font-size:11px;color:#9A7A3A;margin-bottom:2px">' + b.label + '</div>' +
+            '<div style="font-size:16px;font-weight:700;color:#C9A84C">' + b.valor + '</div>' +
+          '</div>'
+        );
+      });
+      frotaWrap.append(grid);
+
+      // Totais à direita
+      var totais = $(
+        '<div style="display:flex;flex-direction:column;gap:10px;min-width:140px">' +
+          '<div class="ikaext-det-campo" style="text-align:center;padding:10px 14px">' +
+            '<div style="font-size:12px;color:#9A7A3A;margin-bottom:4px">⚓ Total Mercantes</div>' +
+            '<div style="font-size:20px;font-weight:700;color:#C9A84C">' + (perfil['Barcos_TotalMercantes'] || 0) + '</div>' +
+          '</div>' +
+          '<div class="ikaext-det-campo" style="text-align:center;padding:10px 14px">' +
+            '<div style="font-size:12px;color:#9A7A3A;margin-bottom:4px">⚓ Total Cargueiros</div>' +
+            '<div style="font-size:20px;font-weight:700;color:#C9A84C">' + (perfil['Barcos_TotalCargueiros'] || 0) + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+      frotaWrap.append(totais);
+      corpo.append(frotaWrap);
     }
 
     // ── Identificação & Resumo ──
@@ -572,6 +474,39 @@ var IkaLookup = {
         cb(Object.keys(dados).length ? dados : null);
       } catch(e) { cb(null); }
     }).fail(function(){ cb(null); });
+  },
+
+  _buscarBarcos: function(cb) {
+    var titulo = $('#js_citySelectContainer .dropDownButton a').attr('title');
+    var cityId = $('#dropDown_js_citySelectContainer a[title="' + titulo + '"]').closest('li').attr('selectvalue');
+    if (!cityId) { cb(null); return; }
+
+    $.get('?view=port&cityId=' + cityId + '&position=2&ajax=1&activeTab=tabBuyTransporter', function(data) {
+      try {
+        var json = typeof data === 'string' ? JSON.parse(data) : data;
+
+        var tpl = null;
+        for (var i = 0; i < json.length; i++) {
+          if (Array.isArray(json[i]) && json[i][0] === 'updateTemplateData') { tpl = json[i][1]; break; }
+        }
+        if (!tpl && json[2] && json[2][1]) tpl = json[2][1];
+        if (!tpl) { cb(null); return; }
+
+        var mercantes         = parseInt(tpl.bonusShipTableTransporters && tpl.bonusShipTableTransporters.text, 10) || 0;
+        var mercantesFenicios = parseInt(tpl.bonusShipTablePhoenicianTransporters && tpl.bonusShipTablePhoenicianTransporters.text, 10) || 0;
+        var cargueiros         = tpl.bonusShipTableFreighters              !== undefined ? parseInt(tpl.bonusShipTableFreighters, 10) || 0 : 0;
+        var cargueirosFenicios = tpl.js_bonusShipTablePhoenicianFreighters !== undefined ? parseInt(tpl.js_bonusShipTablePhoenicianFreighters, 10) || 0 : 0;
+
+        cb({
+          'Barcos_Mercantes':          mercantes,
+          'Barcos_MercantesFenicios':  mercantesFenicios,
+          'Barcos_TotalMercantes':     mercantes + mercantesFenicios,
+          'Barcos_Cargueiros':         cargueiros,
+          'Barcos_CargueirosFenicios': cargueirosFenicios,
+          'Barcos_TotalCargueiros':    cargueiros + cargueirosFenicios
+        });
+      } catch(e) { cb(null); }
+    }, 'json').fail(function(){ cb(null); });
   },
 
   _buscarPesquisas: function(cb) {

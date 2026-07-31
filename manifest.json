@@ -19,7 +19,8 @@
     {
       "resources": [
         "buildingbutton_sprite.jpg",
-        "img/*.png"
+        "img/*.png",
+        "style.css"
       ],
       "matches": [
         "https://*.ikariam.gameforge.com/*"
@@ -39,7 +40,10 @@
         "empire.js",
         "content.js"
       ],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "css": [
+        "style.css"
+      ]
     }
   ]
 }
