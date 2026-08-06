@@ -1261,7 +1261,7 @@
 
       #ikaext-perfil-modal {
         background: #F5EDD6; border-radius: 16px;
-        width: 560px; max-width: 96vw; max-height: 90vh;
+        width: 850px; max-width: 96vw; max-height: 90vh;
         display: flex; flex-direction: column;
         border: 1.5px solid rgba(139,105,20,0.2);
         box-shadow: 0 12px 40px rgba(100,70,0,0.22);

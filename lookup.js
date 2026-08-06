@@ -9,13 +9,18 @@ var IkaLookup = {
   _urlBarcos: null,
   _getUrlBarcos: function () {
     if (!IkaLookup._urlBarcos) {
-      var u = chrome.runtime.getURL;
-      IkaLookup._urlBarcos = {
-        mercantes:          u('img/mercantes.png'),
-        mercantesFenicios:  u('img/mercantesfenicios.png'),
-        cargueiros:         u('img/cargueiros.png'),
-        cargueirosFenicios: u('img/cargueirosFenicios.png')
-      };
+      try {
+        var u = chrome.runtime.getURL;
+        IkaLookup._urlBarcos = {
+          mercantes:          u('img/mercantes.png'),
+          mercantesFenicios:  u('img/mercantesfenicios.png'),
+          cargueiros:         u('img/cargueiros.png'),
+          cargueirosFenicios: u('img/cargueirosFenicios.png')
+        };
+      } catch(e) {
+        // Contexto da extensão inválido — retorna URLs vazias
+        return { mercantes:'', mercantesFenicios:'', cargueiros:'', cargueirosFenicios:'' };
+      }
     }
     return IkaLookup._urlBarcos;
   },
@@ -146,13 +151,16 @@ var IkaLookup = {
 
     // ── Estatísticas ──
     corpo.append('<div class="ikaext-secao">Estatísticas</div>');
-    var statsGrid = $('<div class="ikaext-stats-grid">');
+    var urls = IkaLookup._getUrlBarcos();
+    var statsGrid = $('<div class="ikaext-stats-grid" style="grid-template-columns:repeat(auto-fill,minmax(80px,1fr))">');
+
+    // Stats base
     var stats = [
-      { label: 'Pontuação',          valor: perfil['Pontos'],               icone: '🏆' },
-      { label: 'Mestres Alvenaria',  valor: perfil['Mestres de Alvenaria'], icone: '🏛️' },
-      { label: 'Cientistas',         valor: perfil['Cientistas'],           icone: '🔬' },
-      { label: 'Generais',           valor: perfil['Generais'],             icone: '⚔️' },
-      { label: 'Ouro',               valor: perfil['Ouro'],                 icone: '💰' }
+      { label: 'Pontuação',         valor: perfil['Pontos'],               icone: '🏆' },
+      { label: 'Mestres Alvenaria', valor: perfil['Mestres de Alvenaria'], icone: '🏛️' },
+      { label: 'Cientistas',        valor: perfil['Cientistas'],           icone: '🔬' },
+      { label: 'Generais',          valor: perfil['Generais'],             icone: '⚔️' },
+      { label: 'Ouro',              valor: perfil['Ouro'],                 icone: '💰' }
     ];
     stats.forEach(function(s){
       statsGrid.append(
@@ -163,9 +171,48 @@ var IkaLookup = {
         '</div>'
       );
     });
+
+    // Barcos nas estatísticas (ícones 28px — mesmo tamanho dos emojis)
+    var barcoStats = [
+      { img: urls.mercantes,          label: 'Mercantes',        chave: 'Barcos_Mercantes'          },
+      { img: urls.mercantesFenicios,  label: 'Merc. Fenícios',   chave: 'Barcos_MercantesFenicios'  },
+      { img: urls.cargueiros,         label: 'Cargueiros',       chave: 'Barcos_Cargueiros'         },
+      { img: urls.cargueirosFenicios, label: 'Carg. Fenícios',   chave: 'Barcos_CargueirosFenicios' }
+    ];
+    barcoStats.forEach(function(b){
+      if (perfil[b.chave] === undefined) return;
+      statsGrid.append(
+        '<div class="ikaext-stat-card">' +
+          '<div class="ikaext-stat-icone"><img src="' + b.img + '" style="width:28px;height:28px;object-fit:contain;vertical-align:middle"></div>' +
+          '<span class="ikaext-stat-valor">' + (perfil[b.chave] || 0) + '</span>' +
+          '<div class="ikaext-stat-label">' + b.label + '</div>' +
+        '</div>'
+      );
+    });
+
+    // Totais de barcos
+    if (perfil['Barcos_TotalMercantes'] !== undefined) {
+      statsGrid.append(
+        '<div class="ikaext-stat-card">' +
+          '<div class="ikaext-stat-icone">⚓</div>' +
+          '<span class="ikaext-stat-valor">' + (perfil['Barcos_TotalMercantes'] || 0) + '</span>' +
+          '<div class="ikaext-stat-label">Total Merc.</div>' +
+        '</div>'
+      );
+    }
+    if (perfil['Barcos_TotalCargueiros'] !== undefined) {
+      statsGrid.append(
+        '<div class="ikaext-stat-card">' +
+          '<div class="ikaext-stat-icone">⚓</div>' +
+          '<span class="ikaext-stat-valor">' + (perfil['Barcos_TotalCargueiros'] || 0) + '</span>' +
+          '<div class="ikaext-stat-label">Total Carg.</div>' +
+        '</div>'
+      );
+    }
+
     corpo.append(statsGrid);
 
-    // ── Especializações ──
+    // ── Pesquisas ──
     var espec = [
       { chave: 'Pesquisa_Economia',           nome: 'Economia',  icone: '📈', cor: '#4ade80', max: 25 },
       { chave: 'Pesquisa_Navegação Marítima', nome: 'Náutica',   icone: '⚓', cor: '#60a5fa', max: 25 },
@@ -176,7 +223,7 @@ var IkaLookup = {
 
     var temEspec = espec.some(function(e){ return !!perfil[e.chave]; });
     if (temEspec) {
-      corpo.append('<div class="ikaext-secao">Especializações</div>');
+      corpo.append('<div class="ikaext-secao">Pesquisas</div>');
       var especGrid = $('<div class="ikaext-espec-grid">');
       espec.forEach(function(e) {
         var raw   = perfil[e.chave] || '';
@@ -200,52 +247,6 @@ var IkaLookup = {
         );
       });
       corpo.append(especGrid);
-    }
-
-    // ── Barcos ──
-    var temBarcos = perfil['Barcos_TotalMercantes'] !== undefined || perfil['Barcos_TotalCargueiros'] !== undefined;
-    if (temBarcos) {
-      corpo.append('<div class="ikaext-secao">Frota</div>');
-      var urls = IkaLookup._getUrlBarcos();
-
-      var frotaWrap = $(
-        '<div style="display:flex;align-items:center;gap:20px;padding:4px 0">'
-      );
-
-      var grid = $('<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1">');
-      var barcos = [
-        { img: urls.mercantes,          label: 'Mercantes',           valor: perfil['Barcos_Mercantes']          || 0 },
-        { img: urls.cargueiros,         label: 'Cargueiros',          valor: perfil['Barcos_Cargueiros']         || 0 },
-        { img: urls.mercantesFenicios,  label: 'Mercantes Fenícios',  valor: perfil['Barcos_MercantesFenicios']  || 0 },
-        { img: urls.cargueirosFenicios, label: 'Cargueiros Fenícios', valor: perfil['Barcos_CargueirosFenicios'] || 0 }
-      ];
-
-      barcos.forEach(function(b) {
-        grid.append(
-          '<div class="ikaext-det-campo" style="text-align:center;padding:8px">' +
-            '<img src="' + b.img + '" title="' + b.label + '" style="width:56px;height:56px;object-fit:contain;margin:0 auto 4px;display:block">' +
-            '<div style="font-size:11px;color:#9A7A3A;margin-bottom:2px">' + b.label + '</div>' +
-            '<div style="font-size:16px;font-weight:700;color:#C9A84C">' + b.valor + '</div>' +
-          '</div>'
-        );
-      });
-      frotaWrap.append(grid);
-
-      // Totais à direita
-      var totais = $(
-        '<div style="display:flex;flex-direction:column;gap:10px;min-width:140px">' +
-          '<div class="ikaext-det-campo" style="text-align:center;padding:10px 14px">' +
-            '<div style="font-size:12px;color:#9A7A3A;margin-bottom:4px">⚓ Total Mercantes</div>' +
-            '<div style="font-size:20px;font-weight:700;color:#C9A84C">' + (perfil['Barcos_TotalMercantes'] || 0) + '</div>' +
-          '</div>' +
-          '<div class="ikaext-det-campo" style="text-align:center;padding:10px 14px">' +
-            '<div style="font-size:12px;color:#9A7A3A;margin-bottom:4px">⚓ Total Cargueiros</div>' +
-            '<div style="font-size:20px;font-weight:700;color:#C9A84C">' + (perfil['Barcos_TotalCargueiros'] || 0) + '</div>' +
-          '</div>' +
-        '</div>'
-      );
-      frotaWrap.append(totais);
-      corpo.append(frotaWrap);
     }
 
     // ── Identificação & Resumo ──
@@ -358,7 +359,7 @@ var IkaLookup = {
 
     var tabela = $(
       '<table class="ikaext-ip-tabela">' +
-        '<thead><tr><th>Status</th><th>Endereço IP</th><th>Data / Hora</th></tr></thead>' +
+        '<thead><tr><th>Status</th><th>Endereço IP</th><th>País</th><th>Data / Hora</th></tr></thead>' +
         '<tbody></tbody>' +
       '</table>'
     );
@@ -370,11 +371,15 @@ var IkaLookup = {
       ipsVis[reg.ip] = true;
       var isAtual = idx === 0;
       var data    = new Date(reg.timestamp * 1000).toLocaleString('pt-BR');
+      var paisHtml = reg.flag
+        ? '<img src="' + reg.flag + '" title="' + (reg.country || reg.countryCode || '') + '" style="width:20px;height:14px;object-fit:cover;border-radius:2px;vertical-align:middle">'
+        : (reg.countryCode ? '<span title="' + (reg.country || reg.countryCode) + '">' + reg.countryCode + '</span>' : '—');
       tbody.append(
         '<tr>' +
           '<td><span class="ikaext-status-dot ' + (isAtual?'atual':'anterior') + '"></span>' +
             '<span class="ikaext-status-txt">' + (isAtual?'Atual':'Anterior') + '</span></td>' +
           '<td><span class="ikaext-ip-badge-leve">' + reg.ip + '</span></td>' +
+          '<td style="text-align:center">' + paisHtml + '</td>' +
           '<td style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:#6B4E1A">' + data + '</td>' +
         '</tr>'
       );

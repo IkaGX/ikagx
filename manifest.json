@@ -13,7 +13,8 @@
   ],
   "host_permissions": [
     "https://*.ikariam.gameforge.com/*",
-    "https://api.ipify.org/*"
+    "https://api.ipify.org/*",
+    "https://ipwho.is/*"
   ],
   "web_accessible_resources": [
     {

@@ -92,9 +92,29 @@ function registrarLog(ip) {
       if (!emailSalvo) IkaLog.salvarEmail(email);
       if (nomeMundo)   IkaLog.salvarNomeMundo(servidorAtual, nomeMundo);
       if (perfil && Object.keys(perfil).length > 0) IkaLog.salvarPerfil(servidorAtual, nomeConta, perfil);
-      IkaLog.registrar(servidorAtual, email, nomeConta, ip, null);
+
+      // Busca país do IP antes de registrar o log
+      buscarPais(ip, function (pais) {
+        IkaLog.registrar(servidorAtual, email, nomeConta, ip, null, pais);
+      });
     });
   });
+}
+
+// Busca informações do país a partir do IP via ipwho.is
+function buscarPais(ip, quandoPronto) {
+  fetch('https://ipwho.is/' + ip)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.success) { quandoPronto(null); return; }
+      var regionNames = new Intl.DisplayNames(['pt-BR'], { type: 'region' });
+      quandoPronto({
+        country:     regionNames.of(data.country_code),
+        countryCode: data.country_code,
+        flag:        data.flag && data.flag.img ? data.flag.img : null
+      });
+    })
+    .catch(function() { quandoPronto(null); });
 }
 
 function buscarPerfilParaLog(quandoPronto) {

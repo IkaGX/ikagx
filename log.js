@@ -65,7 +65,7 @@ var IkaLog = {
     } catch (e) { console.warn('[IkaGX] salvarTodos:', e.message); }
   },
 
-  registrar: function (servidor, email, conta, ip, perfil) {
+  registrar: function (servidor, email, conta, ip, perfil, pais) {
     if (!servidor || !email || !conta || !ip) return;
     IkaLog.lerTodos(function (logs) {
       if (!logs[servidor])        logs[servidor] = {};
@@ -80,9 +80,15 @@ var IkaLog = {
           return;
         }
       }
-      lista.push({ account: conta, ip: ip, timestamp: Math.floor(Date.now() / 1000) });
+      var reg = { account: conta, ip: ip, timestamp: Math.floor(Date.now() / 1000) };
+      if (pais) {
+        reg.country     = pais.country;
+        reg.countryCode = pais.countryCode;
+        reg.flag        = pais.flag;
+      }
+      lista.push(reg);
       if (lista.length > IkaLog.LIMITE) logs[servidor][email] = lista.slice(-IkaLog.LIMITE);
-      IkaLog.salvarTodos(logs, function () { console.log('[IkaGX] Log salvo:', servidor, conta); });
+      IkaLog.salvarTodos(logs, function () { console.log('[IkaGX] Log salvo:', servidor, conta, ip, pais ? pais.countryCode : ''); });
       if (perfil) IkaLog.salvarPerfil(servidor, conta, perfil);
     });
   },
