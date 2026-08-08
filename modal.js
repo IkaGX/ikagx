@@ -35,6 +35,7 @@ var IkaModal = {
         '<div id="ikaext-modal-corpo"></div>' +
         '<div id="ikaext-modal-footer">' +
           '<span>IkaGX v2.0 · Ikariam Intelligence</span>' +
+          '<button id="ikaext-btn-geo" title="Atualizar países dos IPs sem geolocalização" style="display:none;background:none;border:none;cursor:pointer;font-size:11px;color:#9A7A3A;padding:0 6px;">🌍</button>' +
           '<span class="ikaext-status-ativo"><span class="ikaext-ponto-verde"></span> Ativo</span>' +
         '</div>' +
       '</div>'
@@ -59,8 +60,98 @@ var IkaModal = {
         IkaModal.renderizarLogs('');
         $('#ikaext-modal-overlay').addClass('aberta');
         $('#ikaext-busca').val('').focus();
+
+        // Verifica se há IPs sem geolocalização — mostra botão discreto
+        var semPais = false;
+        Object.keys(logs).forEach(function(srv) {
+          Object.keys(logs[srv]).forEach(function(email) {
+            logs[srv][email].forEach(function(r) {
+              if (!r.countryCode) semPais = true;
+            });
+          });
+        });
+
+        if (semPais) {
+          $('#ikaext-btn-geo').show().off('click').on('click', function() {
+            IkaModal._enriquecerGeo(logs);
+          });
+        } else {
+          $('#ikaext-btn-geo').hide();
+        }
       });
     });
+  },
+
+  // Busca país para todos os IPs sem geolocalização e atualiza o storage
+  _enriquecerGeo: function(logs) {
+    var btn = $('#ikaext-btn-geo').text('⏳').prop('disabled', true);
+
+    // Coleta IPs únicos sem país
+    var ipsParaBuscar = {};
+    Object.keys(logs).forEach(function(srv) {
+      Object.keys(logs[srv]).forEach(function(email) {
+        logs[srv][email].forEach(function(r) {
+          if (!r.countryCode && r.ip && r.ip !== 'IP indisponível') {
+            ipsParaBuscar[r.ip] = null;
+          }
+        });
+      });
+    });
+
+    var ips = Object.keys(ipsParaBuscar);
+    if (!ips.length) { btn.hide(); return; }
+
+    var processados = 0;
+
+    function proxima(i) {
+      if (i >= ips.length) {
+        // Todos processados — salva e re-renderiza
+        IkaLog.salvarTodos(logs, function() {
+          IkaModal._logsCache = logs;
+          IkaModal.renderizarLogs($('#ikaext-busca').val().trim());
+          btn.hide();
+        });
+        return;
+      }
+
+      var ip = ips[i];
+      fetch('https://ipwho.is/' + ip)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            var regionNames = new Intl.DisplayNames(['pt-BR'], { type: 'region' });
+            ipsParaBuscar[ip] = {
+              country:     regionNames.of(data.country_code),
+              countryCode: data.country_code,
+              flag:        data.flag && data.flag.img ? data.flag.img : null
+            };
+          }
+          processados++;
+          btn.text('⏳ ' + processados + '/' + ips.length);
+
+          // Aplica nos registros
+          Object.keys(logs).forEach(function(srv) {
+            Object.keys(logs[srv]).forEach(function(email) {
+              logs[srv][email].forEach(function(r) {
+                if (r.ip === ip && !r.countryCode && ipsParaBuscar[ip]) {
+                  r.country     = ipsParaBuscar[ip].country;
+                  r.countryCode = ipsParaBuscar[ip].countryCode;
+                  r.flag        = ipsParaBuscar[ip].flag;
+                }
+              });
+            });
+          });
+
+          // Pequeno delay para não sobrecarregar a API
+          setTimeout(function() { proxima(i + 1); }, 300);
+        })
+        .catch(function() {
+          processados++;
+          setTimeout(function() { proxima(i + 1); }, 300);
+        });
+    }
+
+    proxima(0);
   },
 
   fecharModal: function () { $('#ikaext-modal-overlay').removeClass('aberta'); },
