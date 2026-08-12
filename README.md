@@ -1,274 +1,280 @@
 # IkaGX
 
 > **Ikariam Intelligence.**
+>
+> Mais informação. Menos trabalho. Mais controle sobre o seu império.
 
-IkaGX é uma extensão para o navegador baseada em Chrome Extension Manifest V3 que adiciona ferramentas de consulta, coleta e organização de informações ao Ikariam.
+O **IkaGX** é uma extensão para Ikariam criada para transformar informações espalhadas pelo jogo em uma visão muito mais prática e organizada.
 
-O projeto reúne informações do jogo e dados de acesso em uma interface integrada ao Ikariam, mantendo os dados persistidos localmente no navegador.
+Em vez de ficar navegando por várias telas, cidades e menus para descobrir o que está acontecendo, o IkaGX reúne as principais informações em um só lugar.
 
 ---
 
-## Recursos
+## 🚀 O que o IkaGX entrega
 
-### Histórico de IPs
+### 👤 Visão completa do jogador
 
-- Exibe o IP público atual no Lobby e na barra do Ikariam.
-- Registra o histórico de acessos por servidor, e-mail e conta.
-- Evita registros duplicados da mesma conta usando o mesmo IP no mesmo dia.
-- Mantém até 100 registros por combinação de servidor e e-mail.
-- Mostra data e hora de cada acesso.
-- Identifica o país do IP, código do país e bandeira quando a consulta de geolocalização está disponível.
-- Permite pesquisar por conta, IP, e-mail, servidor, mundo ou data.
-- Permite atualizar manualmente a geolocalização de IPs que ainda não possuem país associado.
-- Exibe a quantidade de contas e IPs únicos registrados.
+Tenha uma visão rápida e organizada da sua conta.
 
-### Perfis de jogadores
+Consulte:
 
-- Adiciona o acesso **Meu Perfil** dentro do Ikariam.
-- Consulta e armazena informações do perfil do jogador.
-- Exibe pontuação, Mestres de Alvenaria, Cientistas, Generais e Ouro.
-- Exibe informações de transporte e cargueiros, incluindo versões fenícias quando disponíveis.
-- Consulta e apresenta o progresso das pesquisas:
-  - Economia
-  - Navegação Marítima
-  - Ciência
-  - Mitologia
-  - Militar
-- Mostra informações de identificação e resumo da conta.
-- Apresenta o histórico de IPs associado à conta.
-- Permite ocultar ou mostrar o e-mail na interface.
-- Permite copiar dados do perfil.
-- Permite exportar dados do perfil em JSON e CSV.
+- Pontuação total
+- Mestres de Alvenaria
+- Cientistas
+- Generais
+- Ouro
+- Frotas e cargueiros
+- Informações de pesquisas
+- Dados das cidades
+- Histórico de acessos
+- Informações complementares do jogador
 
-### Império
+Tudo apresentado de forma centralizada e fácil de consultar.
 
-O IkaGX possui uma área de gerenciamento e consulta do império, com coleta dos dados de todas as cidades sem exigir a troca manual da cidade ativa.
+---
 
-#### Recursos
+## 🏛️ Seu império em uma única tela
 
-Apresenta, por cidade:
+Pare de entrar cidade por cidade para descobrir como está o seu império.
+
+O IkaGX reúne as informações das suas cidades em uma visão consolidada.
+
+### Recursos
+
+Visualize rapidamente:
 
 - Madeira
 - Vinho
 - Mármore
 - Cristal
 - Enxofre
-- Capacidade máxima dos recursos
+- Quantidade atual
+- Capacidade de armazenamento
 - Produção
-- População e informações relacionadas quando disponíveis
 
-#### Edifícios
+Ideal para identificar rapidamente onde estão seus recursos e quais cidades precisam de atenção.
 
-- Lista os edifícios encontrados em cada cidade.
-- Exibe os níveis dos edifícios.
-- Identifica construções em processo de melhoria.
-- Organiza as cidades em uma tabela comparativa.
+### 🏗️ Edifícios
 
-#### Inventário
+Compare suas cidades sem precisar abrir cada uma delas.
 
-- Coleta os itens disponíveis no inventário.
-- Apresenta os itens com suas imagens e informações disponíveis no jogo.
+Veja:
 
-#### Militar
+- Edifícios existentes
+- Nível de cada construção
+- Melhorias em andamento
+- Comparação entre cidades
 
-- Coleta as unidades terrestres e navais de todas as cidades.
-- Identifica cada unidade a partir das classes utilizadas pelo Ikariam.
-- Exibe quantidade por cidade.
-- Utiliza os sprites do jogo para diferenciar unidades terrestres e navais.
+Uma visão muito mais prática para acompanhar a evolução do império.
 
-### Armazenamento local
+### 🎒 Inventário
 
-Os dados coletados são mantidos usando `chrome.storage.local`, separados por servidor e conta.
+Tenha seus itens organizados em uma única visualização.
 
-Entre os dados persistidos estão:
+O IkaGX apresenta os itens disponíveis no inventário com suas respectivas imagens e informações.
 
-- Histórico de IPs
-- E-mail da sessão
-- Perfis de jogadores
-- Nome dos mundos/servidores
-- Snapshots dos impérios
+### ⚔️ Militar
 
-Os snapshots do império podem ser reutilizados posteriormente para consulta sem necessidade de uma nova coleta imediata.
+Saiba rapidamente onde estão suas tropas e frotas.
 
-### Interface integrada
+Consulte:
 
-A extensão adiciona seus recursos diretamente à interface do Ikariam, incluindo:
+- Unidades terrestres
+- Unidades navais
+- Quantidades por cidade
+- Identificação visual das unidades
 
-- Histórico de IPs
-- Meu Perfil
-- Império
-- Modais de consulta
-- Abas de Recursos, Edifícios, Inventário e Militar
-- Pesquisa e filtros
-- Exportação de dados
+Uma visão consolidada para acompanhar seu poder militar sem precisar visitar cada cidade.
 
 ---
 
-## Funcionamento da coleta
+## 🌍 Histórico de IPs
 
-Ao acessar um mundo do Ikariam, o IkaGX pode:
+Tenha controle sobre os acessos registrados nas suas contas.
 
-1. Identificar o servidor e o mundo atual.
-2. Obter o IP público através do serviço `ipify`.
-3. Consultar a geolocalização do IP através do `ipwho.is`.
-4. Consultar informações do perfil diretamente nas respostas AJAX do Ikariam.
-5. Complementar os dados com pesquisas e informações de transporte.
-6. Armazenar os dados localmente.
-7. Atualizar o snapshot do império em segundo plano.
+O IkaGX organiza:
 
-A coleta do império percorre as cidades identificadas na conta e consulta os dados necessários diretamente pelas requisições do próprio Ikariam.
+- Conta
+- Servidor
+- Mundo
+- IP
+- Data e hora
+- País
+- Bandeira
+- Histórico de acessos
+
+Com pesquisa e filtros para encontrar rapidamente uma conta, IP ou servidor específico.
+
+### 🔎 Pesquisa rápida
+
+Encontre informações por:
+
+- Conta
+- E-mail
+- IP
+- Servidor
+- Mundo
+- Data
+
+O histórico deixa de ser uma lista difícil de consultar e passa a funcionar como uma ferramenta de acompanhamento.
 
 ---
 
-## Privacidade e dados
+## 🌎 Identificação de países
 
-O IkaGX não possui um servidor próprio para armazenar os dados coletados.
+Os IPs registrados podem ser identificados com:
 
-Os dados persistidos pela extensão ficam no armazenamento local do navegador através de `chrome.storage.local`.
+- Nome do país
+- Código do país
+- Bandeira
 
-A extensão utiliza serviços externos para funções específicas:
-
-- `api.ipify.org` — identificação do IP público atual.
-- `ipwho.is` — consulta de país, código do país e bandeira associada ao IP.
-
-As informações de perfil, cidades, edifícios, inventário e unidades militares são obtidas a partir das páginas e respostas do próprio Ikariam.
+Isso facilita a visualização e organização dos acessos registrados.
 
 ---
 
-## Instalação
+## 📊 Informações organizadas
+
+O IkaGX foi pensado para transformar dados do jogo em informações que realmente ajudam na tomada de decisão.
+
+Em vez de procurar:
+
+**"Onde tenho mármore?"**
+
+Você vê.
+
+Em vez de abrir várias cidades para saber:
+
+**"Onde estão minhas tropas?"**
+
+Você vê.
+
+Em vez de navegar por diversos menus para descobrir:
+
+**"Como está meu império?"**
+
+Você vê.
+
+### Tudo em uma única ferramenta.
+
+---
+
+## 💾 Histórico e snapshots
+
+O IkaGX mantém informações importantes organizadas para consulta posterior.
+
+Isso permite acompanhar informações do império e consultar dados sem precisar refazer todo o processo de levantamento manualmente.
+
+---
+
+## 📤 Exporte suas informações
+
+Quando precisar trabalhar com os dados fora do jogo, o IkaGX permite exportar informações do perfil em:
+
+- JSON
+- CSV
+
+Ideal para análises, controles pessoais, planilhas e outras ferramentas.
+
+---
+
+## 🎯 Para quem é o IkaGX?
+
+### 👑 Jogadores que administram grandes impérios
+
+Tenha uma visão geral das suas cidades sem perder tempo navegando individualmente.
+
+### ⚔️ Jogadores focados em guerra
+
+Consulte rapidamente tropas, frotas, generais e distribuição militar.
+
+### 📈 Jogadores que gostam de organização
+
+Transforme as informações do jogo em dados fáceis de consultar e comparar.
+
+### 🧠 Jogadores que gostam de estratégia
+
+Tenha mais informação para tomar decisões melhores.
+
+### 🏛️ Líderes e administradores de alianças
+
+Facilite o levantamento e a consulta de informações importantes das contas.
+
+---
+
+## ✨ Principais recursos
+
+| Recurso | O que você ganha |
+|---|---|
+| 👤 Perfil | Visão consolidada do jogador |
+| 🏛️ Império | Todas as cidades em uma única visão |
+| 🌲 Recursos | Quantidades, capacidade e produção |
+| 🏗️ Edifícios | Comparação e evolução das construções |
+| 🎒 Inventário | Itens organizados e fáceis de consultar |
+| ⚔️ Militar | Tropas e frotas por cidade |
+| 🌍 IPs | Histórico de acessos organizado |
+| 🔎 Pesquisa | Localização rápida das informações |
+| 🌎 País/Bandeira | Identificação visual dos IPs |
+| 📊 Snapshots | Consulta de informações já coletadas |
+| 📤 Exportação | Dados em JSON e CSV |
+
+---
+
+## 🖥️ Instalação
 
 ### Chrome / Chromium
 
-1. Baixe ou clone o repositório:
-
-```bash
-git clone https://github.com/IkaGX/ikagx.git
-```
-
-2. Abra:
-
-```text
-chrome://extensions
-```
-
+1. Baixe o projeto.
+2. Abra `chrome://extensions`.
 3. Ative o **Modo do desenvolvedor**.
-
 4. Clique em **Carregar sem compactação**.
+5. Selecione a pasta que contém o `manifest.json`.
+6. Acesse o Ikariam.
 
-5. Selecione a pasta do projeto que contém o arquivo `manifest.json`.
-
-6. Acesse o Ikariam e verifique a presença dos recursos adicionados pelo IkaGX.
-
-### Atualização durante o desenvolvimento
-
-Depois de alterar os arquivos da extensão:
-
-1. Volte para `chrome://extensions`.
-2. Localize o IkaGX.
-3. Clique em **Recarregar**.
-4. Atualize a página do Ikariam.
+O IkaGX estará disponível diretamente dentro do jogo.
 
 ---
 
-## Estrutura do projeto
+## 🔄 Atualização
 
-```text
-ikagx/
-├── icons/
-│   ├── icon16.png
-│   ├── icon48.png
-│   └── icon128.png
-├── img/
-│   ├── buttons_sprite_army.png
-│   ├── buttons_sprite_fleet.png
-│   ├── cargueiros.png
-│   ├── cargueirosFenicios.png
-│   ├── mercantes.png
-│   ├── mercantesfenicios.png
-│   └── ícones e sprites do jogo
-├── libs/
-│   └── jquery-4.0.0.min.js
-├── content.js
-├── empire.js
-├── interceptor.js
-├── log.js
-├── lookup.js
-├── modal.js
-├── manifest.json
-├── style.css
-├── LICENSE
-└── README.md
-```
+Para atualizar uma versão instalada manualmente:
 
-### Principais módulos
-
-| Arquivo | Função |
-|---|---|
-| `content.js` | Inicialização da extensão, identificação do mundo/IP e integração com a interface do Ikariam |
-| `lookup.js` | Perfis, consultas complementares, pesquisas, barcos e exportação |
-| `empire.js` | Coleta e apresentação do império, recursos, edifícios, inventário e militar |
-| `log.js` | Persistência de IPs, perfis, mundos e impérios |
-| `modal.js` | Histórico de IPs e pesquisa dos registros |
-| `interceptor.js` | Interceptação de respostas AJAX do Ikariam |
-| `style.css` | Interface visual da extensão |
-| `manifest.json` | Configuração da extensão Manifest V3 |
+1. Substitua os arquivos pela nova versão.
+2. Abra `chrome://extensions`.
+3. Clique em **Recarregar** no IkaGX.
+4. Atualize o Ikariam.
 
 ---
 
-## Tecnologias
+## 🧩 Compatibilidade
 
-- JavaScript
-- Chrome Extension Manifest V3
-- jQuery
-- Chrome Storage API
-- XMLHttpRequest / Fetch
-- APIs AJAX do Ikariam
-- `Intl.DisplayNames` para tradução dos nomes de países
+Atualmente o IkaGX é distribuído como extensão **Chrome/Chromium Manifest V3**.
 
 ---
 
-## Compatibilidade
+## 🔐 Seus dados
 
-O projeto atual é estruturado como uma extensão **Chrome/Chromium Manifest V3**.
+O IkaGX mantém os dados coletados localmente no navegador.
 
-A compatibilidade com outros navegadores pode exigir ajustes específicos no manifesto, APIs de extensão e permissões.
-
----
-
-## Contribuindo
-
-Sugestões, correções e melhorias são bem-vindas.
-
-Para contribuir:
-
-1. Faça um fork do projeto.
-2. Crie uma branch para sua alteração.
-3. Faça as alterações.
-4. Teste a extensão no Ikariam.
-5. Abra um Pull Request.
-
-Problemas e sugestões também podem ser registrados através das Issues do repositório.
+Não existe uma conta ou painel externo obrigatório para utilizar a extensão.
 
 ---
 
-## Licença
-
-Este projeto está licenciado sob a licença **MIT**.
-
-Consulte o arquivo `LICENSE` para os termos completos.
-
----
-
-## Repositório
+## 📦 Projeto
 
 **IkaGX**
+
+**Ikariam Intelligence.**
+
+Uma ferramenta criada para quem quer **enxergar mais, organizar melhor e perder menos tempo no Ikariam.**
+
+### Repositório
 
 https://github.com/IkaGX/ikagx
 
-Desenvolvido para a comunidade do Ikariam com foco em produtividade, organização e inteligência durante o jogo.
-
 ---
 
-**IkaGX**
+## 📜 Licença
 
-*Ikariam Intelligence.*
+Este projeto está disponível sob a licença **MIT**.
+
+Consulte o arquivo `LICENSE` para os termos completos.
