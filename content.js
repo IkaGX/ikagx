@@ -28,6 +28,14 @@ if (estaNoLobby) {
       clearInterval(aguardaLobby);
       IkaModal.iniciar();
       IkaEmpire.iniciarLobby();
+
+      try {
+        var armyUrl  = chrome.runtime.getURL('img/buttons_sprite_army.png');
+        var fleetUrl = chrome.runtime.getURL('img/buttons_sprite_fleet.png');
+        var style    = document.createElement('style');
+        style.textContent = ':root{--ikagx-army-sprite:url("' + armyUrl + '");--ikagx-fleet-sprite:url("' + fleetUrl + '");}';
+        document.head.appendChild(style);
+      } catch(e) {}
     }
   }, 300);
 }
@@ -39,10 +47,17 @@ if (!estaNoLobby) {
       IkaLookup.iniciar();
       IkaEmpire.iniciar();
 
-      // Coleta dados do império em background, sem precisar abrir a modal
-      setTimeout(function () {
-        IkaEmpire.coletarBackground();
-      }, 3000);
+      // Injeta URLs dos sprites militares como variáveis CSS
+      try {
+        var armyUrl  = chrome.runtime.getURL('img/buttons_sprite_army.png');
+        var fleetUrl = chrome.runtime.getURL('img/buttons_sprite_fleet.png');
+        var style    = document.createElement('style');
+        style.textContent = ':root{--ikagx-army-sprite:url("' + armyUrl + '");--ikagx-fleet-sprite:url("' + fleetUrl + '");}';
+        document.head.appendChild(style);
+      } catch(e) { console.warn('[IkaGX] Erro ao injetar sprites:', e); }
+
+      // Coleta dados do império em background
+      setTimeout(function () { IkaEmpire.coletarBackground(); }, 3000);
     }
   }, 300);
 }

@@ -49,6 +49,7 @@ var IkaEmpire = {
           '<div class="ikaext-empire-aba ativa" data-aba="recursos">Recursos</div>' +
           '<div class="ikaext-empire-aba" data-aba="edificios">Edifícios</div>' +
           '<div class="ikaext-empire-aba" data-aba="inventario">Inventário</div>' +
+          '<div class="ikaext-empire-aba" data-aba="militar">Militar</div>' +
         '</div>' +
         '<div id="ikaext-empire-status"></div>' +
         '<div id="ikaext-empire-corpo"></div>' +
@@ -246,23 +247,36 @@ var IkaEmpire = {
 
     function proxima() {
       if (i >= cidades.length) {
-        // Após cidades, coleta inventário
-        IkaEmpire._coletarInventario(function (inventario) {
+        // Após cidades, coleta inventário e militares em paralelo
+        var pendentes = 2;
+        var inventarioFinal = [], militarFinal = {};
+
+        function finalizar() {
+          pendentes--;
+          if (pendentes > 0) return;
           var dados = {
             coletadoEm: Date.now(),
             servidor: servidor,
             conta: conta,
             cidades: resultado,
-            inventario: inventario || []
+            inventario: inventarioFinal,
+            militar: militarFinal
           };
           IkaLog.salvarImperio(servidor, conta, dados);
-
           if ($('#ikaext-empire-overlay').hasClass('aberta')) {
             IkaEmpire._dados = dados;
             IkaEmpire._render();
           }
+          console.log('[IkaGX] Império + inventário + militar salvos:', servidor, conta);
+        }
 
-          console.log('[IkaGX] Império + inventário salvos:', servidor, conta);
+        IkaEmpire._coletarInventario(function(inv) { inventarioFinal = inv || []; finalizar(); });
+        IkaEmpire._coletarMilitarTodas(resultado, function(mil) {
+          // Injeta os dados militares em cada cidade
+          resultado.forEach(function(c) {
+            c.militar = (mil && mil[c.cityId]) ? mil[c.cityId] : [];
+          });
+          finalizar();
         });
         return;
       }
@@ -614,7 +628,125 @@ var IkaEmpire = {
       ? IkaEmpire._renderEdificios(d.cidades)
       : IkaEmpire._abaAtiva === 'inventario'
         ? IkaEmpire._renderInventario(d.inventario)
-        : IkaEmpire._renderRecursos(d.cidades));
+        : IkaEmpire._abaAtiva === 'militar'
+          ? IkaEmpire._renderMilitar(d.cidades)
+          : IkaEmpire._renderRecursos(d.cidades));
+  },
+
+  // Coleta unidades militares e navais de todas as cidades
+  _coletarMilitarTodas: function (cidades, quandoPronto) {
+    var resultado = {};
+    var i = 0;
+
+    function proxima() {
+      if (i >= cidades.length) { quandoPronto(resultado); return; }
+      var cidade = cidades[i++];
+      $.get('?view=cityMilitary&activeTab=tabUnits&cityId=' + cidade.cityId + '&ajax=1', function(data) {
+        try {
+          var json = typeof data === 'string' ? JSON.parse(data) : data;
+          var changeView = null;
+          for (var j = 0; j < json.length; j++) {
+            if (json[j][0] === 'changeView') { changeView = json[j]; break; }
+          }
+          if (!changeView) { proxima(); return; }
+
+          var html = changeView[1][1];
+          var doc  = new DOMParser().parseFromString(html, 'text/html');
+          var unidades = [];
+
+          doc.querySelectorAll('.army, .fleet').forEach(function(el) {
+            var tooltip = el.querySelector('.tooltip');
+            if (!tooltip) return;
+            var th    = el.closest('th');
+            var table = el.closest('table');
+            if (!th || !table) return;
+            var headers  = Array.from(table.querySelectorAll('tr.title_img_row th'));
+            var idx      = headers.indexOf(th);
+            var countRow = table.querySelector('tr.count');
+            if (!countRow) return;
+            var cells    = countRow.querySelectorAll('td');
+            var qtdTxt   = (cells[idx] && cells[idx].textContent.trim()) || '0';
+            var qtd      = Number(qtdTxt.replace(/\./g,'').replace(',','.')) || 0;
+            var classes  = Array.from(el.classList);
+            unidades.push({
+              nome:      tooltip.textContent.trim(),
+              classes:   classes,
+              quantidade: qtd,
+              tipo:      el.classList.contains('army') ? 'terrestre' : 'naval'
+            });
+          });
+
+          resultado[cidade.cityId] = unidades;
+        } catch(e) { console.warn('[IkaGX] militar cidade', cidade.nome, e); }
+        proxima();
+      }, 'json').fail(function() { proxima(); });
+    }
+
+    proxima();
+  },
+
+  // Renderiza aba Militar — tabela com unidades por cidade
+  _renderMilitar: function (cidades) {
+    if (!cidades || !cidades.length) {
+      return '<div class="ikaext-mil-vazio">Dados militares ainda não coletados. Clique em "Atualizar".</div>';
+    }
+
+    // Descobre todas as unidades únicas (mantendo ordem: terrestres depois navais)
+    var unidadesVistas = {}, ordemUnidades = [];
+    cidades.forEach(function(c) {
+      if (!c.militar) return;
+      c.militar.forEach(function(u) {
+        var key = u.classes.join(' ');
+        if (!unidadesVistas[key]) {
+          unidadesVistas[key] = u;
+          ordemUnidades.push(key);
+        }
+      });
+    });
+
+    if (!ordemUnidades.length) {
+      return '<div class="ikaext-mil-vazio">Nenhuma unidade encontrada. Clique em "Atualizar".</div>';
+    }
+
+    // Separa terrestres e navais
+    var terrestres = ordemUnidades.filter(function(k) { return unidadesVistas[k].tipo === 'terrestre'; });
+    var navais     = ordemUnidades.filter(function(k) { return unidadesVistas[k].tipo === 'naval'; });
+
+    function buildTable(tipo, keys) {
+      if (!keys.length) return '';
+      var label = tipo === 'terrestre' ? '⚔️ Terrestres' : '⚓ Navais';
+      var spriteClass = tipo === 'terrestre' ? 'army' : 'fleet';
+
+      var h = '<div class="ikaext-mil-secao">' + label + '</div>';
+      h += '<div style="overflow-x:auto"><table class="ikaext-mil-tabela"><thead><tr>';
+      h += '<th style="text-align:left">Cidade</th>';
+
+      keys.forEach(function(key) {
+        var u = unidadesVistas[key];
+        var unitClass = u.classes.filter(function(c) { return c !== 'army' && c !== 'fleet'; }).join(' ');
+        h += '<th title="' + IkaEmpire._esc(u.nome) + '">' +
+               '<div class="ikaext-unit-icon ' + spriteClass + ' ' + unitClass + '"></div>' +
+             '</th>';
+      });
+      h += '</tr></thead><tbody>';
+
+      cidades.forEach(function(c) {
+        h += '<tr><td class="ikaext-mil-cidade">' + IkaEmpire._rotuloCidade(c) + '</td>';
+        var qtdMap = {};
+        if (c.militar) c.militar.forEach(function(u) { qtdMap[u.classes.join(' ')] = u.quantidade; });
+
+        keys.forEach(function(key) {
+          var qtd = qtdMap[key] || 0;
+          h += '<td class="' + (qtd === 0 ? 'zero' : '') + '">' + (qtd > 0 ? qtd : '—') + '</td>';
+        });
+        h += '</tr>';
+      });
+
+      h += '</tbody></table></div>';
+      return h;
+    }
+
+    return buildTable('terrestre', terrestres) + buildTable('naval', navais);
   },
 
   _renderInventario: function (inventario) {

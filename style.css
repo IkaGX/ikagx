@@ -1553,3 +1553,59 @@
         box-shadow: 0 8px 32px rgba(100,70,0,0.18);
       }
       #ikaext-btn-imperios:hover { background: #E5D5A8; }
+
+/* ══════════════════════════════════════════════════════════════════
+   7. UNIDADES MILITARES E NAVAIS (sprites do Ikariam)
+══════════════════════════════════════════════════════════════════ */
+.ikaext-unit-icon {
+  width: 50px; height: 50px; display: inline-block;
+  background-repeat: no-repeat; flex-shrink: 0;
+}
+/* Unidades terrestres — URL injetada via JS em IkaLookup._injetarSpriteUrls() */
+.ikaext-unit-icon.army {
+  background-image: var(--ikagx-army-sprite);
+}
+.ikaext-unit-icon.army.s301{} /*Fundeiro*/
+.ikaext-unit-icon.army.s302{background-position:  -50px 0 } /*Espadachim*/
+.ikaext-unit-icon.army.s303{background-position: -100px 0 } /*Hoplita*/
+.ikaext-unit-icon.army.s304{background-position: -200px 0px} /*Carabineiro*/
+.ikaext-unit-icon.army.s305{background-position: -550px 0px} /*Morteiro*/
+.ikaext-unit-icon.army.s306{background-position: -500px 0px} /*Catapulta*/
+.ikaext-unit-icon.army.s307{background-position: -600px 0px} /*Aríete*/
+.ikaext-unit-icon.army.s308{background-position: -350px 0px} /*Gigante a Vapor*/
+.ikaext-unit-icon.army.s309{background-position: -450px 0px} /*Balão-Bombardeiro*/
+.ikaext-unit-icon.army.s310{background-position: -300px 0px} /*Cozinheiro*/
+.ikaext-unit-icon.army.s311{background-position: -250px 0px} /*Médico*/
+.ikaext-unit-icon.army.s312{background-position: -400px 0px} /*Girocóptero*/
+.ikaext-unit-icon.army.s313{background-position: -150px 0px} /*Arqueiro*/
+.ikaext-unit-icon.army.s315{background-position: -750px 0px} /*Lanceiro*/
+.ikaext-unit-icon.army.s319{background-position: -900px 0px} /*Espartano*/
+
+/* Unidades navais — URL injetada via JS */
+.ikaext-unit-icon.fleet {
+  background-image: var(--ikagx-fleet-sprite);
+}
+.ikaext-unit-icon.fleet.s210{background-position: -50px 0px} /*Trireme*/
+.ikaext-unit-icon.fleet.s211{background-position: -150px 0px} /*Lança-Chamas*/
+.ikaext-unit-icon.fleet.s212{background-position: -350px 0px} /*Submergível*/
+.ikaext-unit-icon.fleet.s213{background-position: -100px 0px} /*Barco Balista*/
+.ikaext-unit-icon.fleet.s214{background-position: -200px 0px} /*Barco Catapulta*/
+.ikaext-unit-icon.fleet.s215{background-position: -300px 0px} /*Barco Morteiro*/
+.ikaext-unit-icon.fleet.s216{background-position: -250px 0px} /*Aríete a Vapor*/
+.ikaext-unit-icon.fleet.s217{background-position: -550px 0px} /*Lança-Foguetes*/
+.ikaext-unit-icon.fleet.s218{background-position: -500px 0px} /*Lancha Rápida*/
+.ikaext-unit-icon.fleet.s219{background-position: -450px 0px} /*Porta-balões*/
+.ikaext-unit-icon.fleet.s220{background-position: -400px 0px} /*Reparador*/
+
+/* Grid de unidades na aba Militar */
+.ikaext-mil-secao {
+  font-size: 10px; font-weight: 700; color: #9A7A3A; text-transform: uppercase;
+  letter-spacing: 0.1em; padding: 8px 12px 4px; border-bottom: 1px solid rgba(139,105,20,0.15);
+}
+.ikaext-mil-tabela { width: 100%; border-collapse: collapse; font-size: 12px; background: #F5EDD6; }
+.ikaext-mil-tabela th { background: #EDE0BE; padding: 4px 6px; text-align: center; position: sticky; top: 0; z-index: 2; border: 1px solid rgba(139,105,20,0.15); }
+.ikaext-mil-tabela td { padding: 5px 8px; border: 1px solid rgba(139,105,20,0.1); text-align: center; }
+.ikaext-mil-tabela tr:hover td { background: rgba(201,168,76,0.07); }
+.ikaext-mil-tabela td.ikaext-mil-cidade { text-align: left; font-weight: 600; color: #3D2B00; white-space: nowrap; position: sticky; left: 0; background: #F5EDD6; z-index: 1; }
+.ikaext-mil-tabela td.zero { color: #C9C0A8; }
+.ikaext-mil-vazio { text-align: center; padding: 30px; color: #9A7A3A; font-style: italic; }
